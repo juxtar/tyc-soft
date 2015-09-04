@@ -1,4 +1,4 @@
-#Planificador y organizador de torneos y competencias
+#Planificador y Gestor de Encuentros Deportivos
 
 ##Contribuidores 
-Luciano, Julián, Germán
+Luciano, Julián, Germán, Matías
