@@ -65,6 +65,9 @@ class Sesion(Base):
 
 	usuario = relationship("Usuario")
 
+	def __repr__(self):
+		return '<Sesion(%r, %r)>' % (self.nombre, self.usuario)
+
 class Lugar(Base):
 	"""Almacena informacion de un lugar"""
 
@@ -91,6 +94,9 @@ class Deporte(Base):
 
 	#Lugar relationship
 
+	def __repr__(self):
+		return '<Deporte(%r)>' % self.nombre
+
 class Competencia(Base):
 	"""Almacena informacion de una competencia"""
 	
@@ -115,7 +121,6 @@ class Competencia(Base):
         'polymorphic_identity':'competencia',
         'polymorphic_on':tipo
     }
-
 	def __repr__(self):
 		return '<Competencia(%r, %r)>' % (self.nombre, self.estado)
 
@@ -132,6 +137,8 @@ class CompetenciaLiga(Competencia):
 	__mapper_args__ = {
         'polymorphic_identity':'liga',
     }
+    def __repr__(self):
+		return '<CompetenciaLiga(%r, %r)>' % (self.nombre, self.estado)
 
 class CompetenciaEliminatoriaSimple(Competencia):
 	"""Almacena informacion de una competencia modalidad eliminatoria simple"""
@@ -143,6 +150,8 @@ class CompetenciaEliminatoriaSimple(Competencia):
 	__mapper_args__ = {
         'polymorphic_identity':'eliminatoriasimple',
     }
+    def __repr__(self):
+		return '<CompetenciaEliminatoriaSimple(%r, %r)>' % (self.nombre, self.estado)
 
 class CompetenciaEliminatoriaDoble(Competencia):
 	"""Almacena informacion de una competencia modalidad eliminatoria doble"""
@@ -154,6 +163,8 @@ class CompetenciaEliminatoriaDoble(Competencia):
 	__mapper_args__ = {
         'polymorphic_identity':'eliminatoriadoble',
     }
+    def __repr__(self):
+		return '<CompetenciaEliminatoriaDoble(%r, %r)>' % (self.nombre, self.estado)
 
 class Participante(Base):
 	"""Almacena informacion de un participante"""
@@ -167,6 +178,9 @@ class Participante(Base):
 
 	historial_nombres = relationship("HistorialNombres")
 
+	def __repr__(self):
+		return '<Participante(%r, %r)>' % (self.nombre, self.correo_electronico)
+
 class HistorialNombres(Base):
 	"""Almacena informacion del historial de nombres del usuario"""
 
@@ -176,6 +190,9 @@ class HistorialNombres(Base):
 	nombre = Column(String, nullable=False)
 	fecha = Column(Date)
 	id_participante = Column(Integer, ForeignKey('participante.id'))
+
+	def __repr__(self):
+		return '<HistorialNombres(%r, %r)>' % (self.nombre)
 
 class Partida(Base):
 	"""Almacena informacion de una partida"""
@@ -202,6 +219,9 @@ class Partida(Base):
 	resultado = relationship("Resultado", uselist=False, foreign_keys="Partida.id_resultado")
 	historial = relationship("Resultado", foreign_keys="Resultado.id_partida")
 
+	def __repr__(self):
+		return '<Partida(%r, %r)>' % (self.instancia, self.estado)
+
 class Competidor(Base):
 	"""Representa el rol de un participante dentro de una partida"""
 
@@ -213,6 +233,9 @@ class Competidor(Base):
 	id_participante = Column(Integer, ForeignKey('participante.id'))
 
 	participante = relationship("Participante")
+
+	def __repr__(self):
+		return '<Competidor(%r, %r)>' % (self.presente, self.participante)
 
 class Resultado(Base):
 	"""Almacena informacion del resultado de una partida"""
@@ -229,6 +252,9 @@ class Resultado(Base):
         'polymorphic_on':tipo
     }
 
+    def __repr__(self):
+		return '<Resultado(%r, %r)>' % (self.fecha)
+
 class ResultadoPorResultadoFinal(Resultado):
 	"""Almacena informacion de un resultado de tipo final (ganado o perdido)"""
 	
@@ -241,6 +267,8 @@ class ResultadoPorResultadoFinal(Resultado):
 	__mapper_args__ = {
         'polymorphic_identity':'porresultadofinal',
     }
+    def __repr__(self):
+		return '<ResultadoPorResultadoFinal(%r, %r)>' % (self.resultado_de_local, self.resultado_de_visitante)
 
 class ResultadoPorPuntuacion(Resultado):
 	"""Almacena informacion de un resultado de tipo puntuacion"""
@@ -254,6 +282,8 @@ class ResultadoPorPuntuacion(Resultado):
 	__mapper_args__ = {
         'polymorphic_identity':'porpuntuacion',
     }
+    def __repr__(self):
+		return '<ResultadoPorPuntuacion(%r, %r)>' % (self.puntos_de_local, self.puntos_de_visitante)
 
 class ResultadoPorSet(Resultado):
 	"""Almacena informacion de un resultado de tipo sets"""
@@ -266,6 +296,8 @@ class ResultadoPorSet(Resultado):
 	__mapper_args__ = {
         'polymorphic_identity':'porsets',
     }
+    def __repr__(self):
+		return '<ResultadoPorSet(%r, %r)>' % (self.fecha, self.sets)
 
 class Set(Base):
 	"""Almacena informacion de un set"""
@@ -277,3 +309,6 @@ class Set(Base):
 	puntaje_de_visitante = Column(Integer, nullable=False)
 	numero = Column(Integer, nullable=False)
 	id_resultado = Column(Integer, ForeignKey('porsets.id'))
+
+	def __repr__(self):
+		return '<Set(%r, %r, %r)>' % (self.numero, self.puntaje_de_local, self.puntaje_de_visitante)
