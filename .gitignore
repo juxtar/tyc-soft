@@ -1,2 +1,8 @@
 #Archivos PyCharm
 .idea/
+
+#Binarios Python
+*.pyc
+
+#Pruebas
+prueba.*

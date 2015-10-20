@@ -68,6 +68,11 @@ class Sesion(Base):
     def __repr__(self):
         return '<Sesion(%r, %r)>' % (self.nombre, self.usuario)
 
+tabla_se_desarrolla = Table('se_desarrolla', Base.metadata,
+    Column('id_deporte', Integer, ForeignKey('deporte.id')),
+    Column('id_lugar', Integer, ForeignKey('lugar.id'))
+)
+
 class Lugar(Base):
     """Almacena informacion de un lugar"""
 
@@ -90,11 +95,6 @@ tabla_alberga = Table('alberga', Base.metadata,
     Column('id_competencia', Integer, ForeignKey('competencia.id')),
     Column('id_lugar', Integer, ForeignKey('lugar.id')),
     Column('disponibilidad', Integer)
-)
-
-tabla_se_desarrolla = Table('se_desarrolla', Base.metadata,
-    Column('id_deporte', Integer, ForeignKey('deporte.id')),
-    Column('id_lugar', Integer, ForeignKey('lugar.id'))
 )
 
 class Deporte(Base):
