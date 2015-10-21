@@ -618,32 +618,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkAdjustment" id="presentismo">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="puntos">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="puntos1">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="puntos2">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="sets">
-    <property name="lower">1</property>
-    <property name="upper">9</property>
-    <property name="step_increment">2</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkWindow" id="nueva_modificar_competencia">
     <property name="width_request">600</property>
     <property name="can_focus">False</property>
@@ -2341,6 +2315,32 @@
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="presentismo">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="puntos">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="puntos1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="puntos2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="sets">
+    <property name="lower">1</property>
+    <property name="upper">9</property>
+    <property name="step_increment">2</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkTextBuffer" id="textbuffer1"/>
   <object class="GtkWindow" id="ver_competencia">
     <property name="width_request">600</property>
@@ -2442,7 +2442,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkLabel" id="Modalidad">
+              <object class="GtkLabel" id="label28">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.89999997615814209</property>
@@ -2459,7 +2459,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="mod1">
+              <object class="GtkLabel" id="modalidad">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.10000000149011612</property>
@@ -2488,7 +2488,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="Deporte">
+              <object class="GtkLabel" id="label29">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.89999997615814209</property>
@@ -2505,7 +2505,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="mod2">
+              <object class="GtkLabel" id="deporte">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.10000000149011612</property>
@@ -2534,7 +2534,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="Estado">
+              <object class="GtkLabel" id="label30">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.89999997615814209</property>
@@ -2551,7 +2551,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="mod3">
+              <object class="GtkLabel" id="estado">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.10000000149011612</property>
