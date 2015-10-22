@@ -27,8 +27,8 @@ def agregar_cuadro_error(main_window):
     	"""Elimina mensajes anteriores y agrega los mensajes pasados como
     	argumento al widget de error"""
     	contenedor = self.infobar.get_child()
-    	for hijo in contenedor.get_children():
-            contenedor.remove(hijo)
+    	for widget in contenedor.get_children():
+            contenedor.remove(widget)
         for mensaje in mensajes:
             label = gtk.Label(mensaje)
             contenedor.pack_start(label, True, True, 0)
