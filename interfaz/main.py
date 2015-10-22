@@ -10,7 +10,7 @@ def agregar_cuadro_error(main_window):
 	hijo = main_window.get_child()
 	vbox = gtk.VBox()
 	glade = gtk.Builder()
-	glade.add_from_file('error.glade')
+	glade.add_from_file('glade\error.glade')
 	infobar = glade.get_object('infobar')
 	infobar.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color("#ff0000"))
 
