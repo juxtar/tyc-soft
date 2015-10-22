@@ -45,17 +45,34 @@ class GestorBaseDeDatos(Singleton):
         Session = sessionmaker(bind=engine)
         self.session = Session()
 
-    def agregar_competencia(self):
-        pass
+    def agregar_competencia(self, competencia):
+        self.session.add(competencia)
+        self.session.commit()
 
-    def agregar_participante(self):
-        pass
+    def agregar_participante(self, participante):
+        self.session.add(participante)
+        self.session.commit()
 
-    def listar_participantes(self):
-        pass
+    def listar_participantes(self, id_competencia):
+        return self.session.query(Participante).filter(Participante.id_competencia == id_competencia).all()
 
-    def listar_competencias(self):
-        pass
+    def listar_competencias(self, id_competencia= None, nombre = None, id_usuario = None, deporte = None, modalidad = None, estado = None):
+        query = self.session.query(Competencia)
+        if id_competencia is not None:
+            query = query.filter(Competencia.id == id_competencia)
+            return query.one()
+        if nombre is not None:
+            query = query.filter(Competencia.nombre == nombre)
+        if id_usuario is not None:
+            query = query.filter(Competencia.id_usuario == id_usuario)
+        if deporte is not None:
+            query = query.filter(Competencia.deporte == deporte)
+        if modalidad is not None:
+            query = query.filter(Competencia.modalidad == modalidad)
+        if estado is not None:
+            query = query.filter(Competencia.estado == estado)
+        return query.all()
 
-    def listar_lugar(self):
+    def listar_lugar(self, id_usuario):
+        return self.session.query(Lugar).filter(Lugar.id_usuario == id_usuario).all()
         pass
