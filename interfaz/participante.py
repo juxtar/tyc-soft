@@ -28,7 +28,8 @@ class NuevoParticipante:
 
 class VerParticipantes:
     """Interfaz para ver los participantes de una competencia"""
-    def __init__(self):
+    def __init__(self, id_competencia):
+        self.id_competencia = id_competencia
         self.glade = gtk.Builder()
         self.glade.add_from_file('glade\participante.glade')
         self.main_window = self.glade.get_object('ver_participantes')
@@ -36,6 +37,12 @@ class VerParticipantes:
         self.main_window.show_all()
         self.infobar, boton_cerrar, self.cerrar_error, self.mostrar_error = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
+
+        lista_participantes = GestorParticipantes().singleton().listar_participantes(id_competencia)
+        modelo = self.glade.get_object('treeview1').get_model()
+        modelo.clear()
+        for participante in lista_participantes:
+            modelo.append([participante.nombre, participante.correo_electronico])
 
     def volver(self, widget):
         pass

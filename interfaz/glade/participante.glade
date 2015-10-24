@@ -9,16 +9,6 @@
       <!-- column-name Correo -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Ramiro</col>
-        <col id="1" translatable="yes">ramiro@email.com</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Jorge</col>
-        <col id="1" translatable="yes">jorgito@uymiraquelindoemail.com</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="modificar_participante">
     <property name="width_request">600</property>
@@ -630,6 +620,7 @@
                   <object class="GtkTreeView" id="treeview1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="model">liststore1</property>
                     <property name="search_column">0</property>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
