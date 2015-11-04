@@ -9,7 +9,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes"> </col>
+        <col id="0" translatable="yes"></col>
       </row>
       <row>
         <col id="0" translatable="yes">Fútbol</col>
@@ -32,7 +32,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes"> </col>
+        <col id="0" translatable="yes"></col>
       </row>
       <row>
         <col id="0" translatable="yes">Creada</col>
@@ -55,7 +55,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes"> </col>
+        <col id="0" translatable="yes"></col>
       </row>
       <row>
         <col id="0" translatable="yes">Liga</col>
@@ -67,6 +67,20 @@
         <col id="0" translatable="yes">Eliminatoria Doble</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name Nombre -->
+      <column type="gchararray"/>
+      <!-- column-name Deporte -->
+      <column type="gchararray"/>
+      <!-- column-name Modalidad -->
+      <column type="gchararray"/>
+      <!-- column-name Estado -->
+      <column type="gchararray"/>
+      <!-- column-name Creador -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkWindow" id="listar_competencia">
     <property name="width_request">600</property>
@@ -266,6 +280,8 @@
               <object class="GtkComboBox" id="comboDeporte">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="model">listaDeporte</property>
+                <property name="active">0</property>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext1"/>
                   <attributes>
@@ -311,6 +327,8 @@
               <object class="GtkComboBox" id="comboModal">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="model">listaModalidad</property>
+                <property name="active">0</property>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext2"/>
                   <attributes>
@@ -356,6 +374,8 @@
               <object class="GtkComboBox" id="comboEstado">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="model">listaEstado</property>
+                <property name="active">0</property>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext3"/>
                   <attributes>
@@ -453,6 +473,7 @@
                   <object class="GtkTreeView" id="treeview1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="model">liststore1</property>
                     <property name="reorderable">True</property>
                     <property name="search_column">0</property>
                     <property name="rubber_banding">True</property>
@@ -468,6 +489,7 @@
                         <property name="clickable">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">0</property>
                         <child>
                           <object class="GtkCellRendererSpin" id="cellrendererspin1"/>
                           <attributes>
@@ -486,6 +508,7 @@
                         <property name="clickable">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">1</property>
                         <child>
                           <object class="GtkCellRendererSpin" id="cellrendererspin2"/>
                           <attributes>
@@ -504,6 +527,7 @@
                         <property name="clickable">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">2</property>
                         <child>
                           <object class="GtkCellRendererSpin" id="cellrendererspin3"/>
                           <attributes>
@@ -522,6 +546,7 @@
                         <property name="clickable">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">3</property>
                         <child>
                           <object class="GtkCellRendererSpin" id="cellrendererspin4"/>
                           <attributes>
@@ -540,6 +565,7 @@
                         <property name="clickable">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">4</property>
                         <child>
                           <object class="GtkCellRendererSpin" id="cellrendererspin5"/>
                           <attributes>
@@ -589,20 +615,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name Nombre -->
-      <column type="gchararray"/>
-      <!-- column-name Deporte -->
-      <column type="gchararray"/>
-      <!-- column-name Modalidad -->
-      <column type="gchararray"/>
-      <!-- column-name Estado -->
-      <column type="gchararray"/>
-      <!-- column-name Creador -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkListStore" id="liststore2">
     <columns>
