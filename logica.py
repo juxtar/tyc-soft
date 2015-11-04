@@ -15,14 +15,50 @@ class Singleton:
             cls.instancia = cls()
         return cls.instancia
 
+class GestorCompetencia(Singleton):
+    """Realiza tareas correspondiente al manejo de clases Participante"""
+    def __init__(self):
+        pass
+    def nueva_competencia(self, nombre = None, deporte = None, lugares = None, ):
+        pass
+    def eliminar_competencia(self):
+        pass
+    def listar_competencias(self, id_competencia = None, nombre=None, id_usuario = None, deporte = None, modalidad = None, estado = None):
+        if id_competencia is not None:
+            return GestorBaseDeDatos.singleton().listar_competencias(id_competencia=id_competencia)
+        else:
+            return GestorBaseDeDatos.singleton().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
+
+    def generar_fixture(self):
+        pass
+    def modificar_competencia(self):
+        pass
+    def generar_tabla_posiciones(self):
+        pass
+    def eliminar_fiture(self):
+        pass
 
 class GestorParticipante(Singleton):
     """Realiza tareas correspondiente al manejo de clases Participante"""
     def __init__(self):
         pass
 
-    def nuevo_participante(self):
-        pass
+    def nuevo_participante(self, DTOParticipante):
+        """Realiza las correspondientes validaciones con del participante y luego lo agrega al sistema"""
+
+        lista_participantes = GestorBaseDeDatos.singleton().listar_participantes(id_competencia = DTOParticipante.id_competencia)
+        if DTOParticipante.nombre == None:
+                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Debe escribir un nombre para este participante')
+        if DTOParticipante.correo_electronico == None:
+                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Debe escribir un correo electronico para este participante')
+        for i in lista_participantes:
+            if i.nombre == DTOParticipante.nombre:
+                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Este participante ya existe en esta competencia')
+            if i.correo_electronico == DTOParticipante.correo_electronico:
+                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Este correo electronico ya existe en esta competencia')
+        part = Participante(nombre=DTOParticipante.nombre, correo_electroonico = DTOParticipante.correo_electroonico, imagen = DTOParticipante.imagen)
+        GestorBaseDeDatos.singleton().agregar_participante(part)
+        
 
     def modificar_participante(self):
         pass
