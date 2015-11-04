@@ -15,11 +15,17 @@ def agregar_cuadro_error(main_window):
     infobar.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color("#ff0000"))
 
     vbox.pack_start(infobar, False, True, 0)
-    vbox.pack_start(hijo, True, True, 0)
-    main_window.remove(hijo)
+    if hijo is not None:
+        main_window.remove(hijo)
+        vbox.pack_start(hijo, True, True, 0)
     main_window.add(vbox)
 
     boton_cerrar = glade.get_object('button1')
+
+    return infobar, boton_cerrar
+
+class Interfaz:
+    """Clase abstracta de interfaz que contiene metodos comunes a todas las interfaces"""
 
     def cerrar_error(self, widget):
         """Oculta el mensaje de error en la ventana correspondiente"""
@@ -28,7 +34,7 @@ def agregar_cuadro_error(main_window):
     def mostrar_error(self, *mensajes):
         """Elimina mensajes anteriores y agrega los mensajes pasados como
         argumento al widget de error"""
-        contenedor = self.infobar.get_child()
+        contenedor = self.infobar.get_child().get_children()[1]
         for widget in contenedor.get_children():
             contenedor.remove(widget)
         for mensaje in mensajes:
@@ -36,5 +42,3 @@ def agregar_cuadro_error(main_window):
             contenedor.pack_start(label, True, True, 0)
             label.show()
         self.infobar.show()
-
-    return infobar, boton_cerrar, cerrar_error, mostrar_error
