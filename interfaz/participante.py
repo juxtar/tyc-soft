@@ -38,7 +38,7 @@ class VerParticipantes:
         self.infobar, boton_cerrar, self.cerrar_error, self.mostrar_error = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
 
-        lista_participantes = GestorParticipantes().singleton().listar_participantes(id_competencia)
+        lista_participantes = GestorParticipantes().get_instance().listar_participantes(id_competencia)
         modelo = self.glade.get_object('treeview1').get_model()
         modelo.clear()
         for participante in lista_participantes:

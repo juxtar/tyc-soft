@@ -9,7 +9,7 @@ class Singleton:
     instancia = None
 
     @classmethod
-    def singleton(cls):
+    def get_instance(cls):
         """Devuelve una unica instancia de la clase"""
         if cls.instancia is None:
             cls.instancia = cls()
@@ -25,9 +25,9 @@ class GestorCompetencia(Singleton):
         pass
     def listar_competencias(self, id_competencia = None, nombre=None, id_usuario = None, deporte = None, modalidad = None, estado = None):
         if id_competencia is not None:
-            return GestorBaseDeDatos.singleton().listar_competencias(id_competencia=id_competencia)
+            return GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
         else:
-            return GestorBaseDeDatos.singleton().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
+            return GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
 
     def generar_fixture(self):
         pass
@@ -46,18 +46,18 @@ class GestorParticipante(Singleton):
     def nuevo_participante(self, DTOParticipante):
         """Realiza las correspondientes validaciones con del participante y luego lo agrega al sistema"""
 
-        lista_participantes = GestorBaseDeDatos.singleton().listar_participantes(id_competencia = DTOParticipante.id_competencia)
+        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia = DTOParticipante.id_competencia)
         if DTOParticipante.nombre == None:
-                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Debe escribir un nombre para este participante')
+                agregar_cuadro_error.get_instance().mostrar_error(mensajes = 'Debe escribir un nombre para este participante')
         if DTOParticipante.correo_electronico == None:
-                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Debe escribir un correo electronico para este participante')
+                agregar_cuadro_error.get_instance().mostrar_error(mensajes = 'Debe escribir un correo electronico para este participante')
         for i in lista_participantes:
             if i.nombre == DTOParticipante.nombre:
-                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Este participante ya existe en esta competencia')
+                agregar_cuadro_error.get_instance().mostrar_error(mensajes = 'Este participante ya existe en esta competencia')
             if i.correo_electronico == DTOParticipante.correo_electronico:
-                agregar_cuadro_error.singleton().mostrar_error(mensajes = 'Este correo electronico ya existe en esta competencia')
+                agregar_cuadro_error.get_instance().mostrar_error(mensajes = 'Este correo electronico ya existe en esta competencia')
         part = Participante(nombre=DTOParticipante.nombre, correo_electroonico = DTOParticipante.correo_electroonico, imagen = DTOParticipante.imagen)
-        GestorBaseDeDatos.singleton().agregar_participante(part)
+        GestorBaseDeDatos.get_instance().agregar_participante(part)
         
 
     def modificar_participante(self):
