@@ -4,6 +4,24 @@ import gtk
 import gtk.glade
 from main import agregar_cuadro_error, Interfaz
 
+def obtener_descendientes(widget, tipo):
+    """Busca descendientes del widget del tipo especificado"""
+    descendientes = []
+    try:
+        for hijo in widget.get_children():
+            if type(hijo).__name__ == tipo:
+                descendientes.append(hijo)
+            else:
+                descendientes += obtener_descendientes(hijo, tipo)
+    except AttributeError:
+        return []
+    except TypeError:
+        hijo = widget.get_children()
+        if type(hijo).__name__ == tipo:
+            descendientes.append(hijo)
+    finally:
+        return descendientes
+
 class ListarMisCompetencias(Interfaz):
     """Interfaz para buscar y listar las competencias de un usuario"""
     def __init__(self, id_usuario):
@@ -58,6 +76,139 @@ class ListarMisCompetencias(Interfaz):
     def destroy(self, widget):
         gtk.main_quit()
 
+
+class NuevaCompetencia(Interfaz):
+    """Interfaz para crear una nueva competencia"""
+    def __init__(self, id_usuario):
+        self.id_usuario = id_usuario
+        self.glade = gtk.Builder()
+        self.glade.add_from_file('glade\competencia.glade')
+        self.glade.get_object('button4').connect('clicked', self.volver)
+        self.glade.get_object('button5').connect('clicked', self.aceptar)
+
+        botones = obtener_descendientes(self.glade.get_object('vbox1'), 'RadioButton')
+        botones.append(self.glade.get_object('empate'))
+        for b in botones:
+            b.connect('toggled', self.dinamizar)
+        self.glade.get_object('entry2').connect('changed', self.dinamizar)
+
+        lista_lugares = GestorLugar.get_instance().listar_lugar(id_usuario)
+        for lugar in lista_lugares:
+            cuadrolugar = CuadroLugar(lugar.nombre)
+            self.glade.get_object('lugares').pack_start(cuadrolugar, False, True, 2)
+            cuadrolugar.show_all()
+
+        self.main_window = self.glade.get_object('nueva_modificar_competencia')
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        boton_cerrar.connect('clicked', self.cerrar_error)
+        self.main_window.show_all()
+
+    def volver(self, widget):
+        self.destroy(None) # Temporal por esta entrega
+
+    def dinamizar(self, widget):
+        nombre = gtk.Buildable.get_name(widget)
+        if nombre == 'empate':
+            self.glade.get_object('viewport4').set_sensitive(widget.get_active())
+        elif nombre in ['liga', 'eliminatoriasimple', 'eliminatoriadoble']:
+            self.glade.get_object('label14').set_text('Modalidad {}'.format(widget.get_label()))
+            if nombre == 'liga':
+                tabla = self.glade.get_object('table1')
+                if widget.get_active():
+                    tabla.show()
+                else:
+                    tabla.hide()
+        elif nombre == 'porsets':
+            cantidad_sets = self.glade.get_object('cantSets0')
+            if widget.get_active():
+                cantidad_sets.show()
+            else:
+                cantidad_sets.hide()
+        elif nombre == 'porpuntuacion':
+            presentismo = self.glade.get_object('cantPunt0')
+            if widget.get_active():
+                presentismo.show()
+            else:
+                presentismo.hide()
+        elif nombre == 'entry2':
+            texto = widget.get_text().upper()
+            widget.set_text(texto)
+
+    def aceptar(self, widget):
+        deporte_box = self.glade.get_object('comboDeporte1')
+        deporte = deporte_box.get_model()[deporte_box.get_active()][0]
+        nombre = self.glade.get_object('entry2').get_text()
+
+        mensaje_errores = []
+        if nombre == '':
+            mensaje_errores.append('Debe ingresar un nombre para la competencia.')
+        if deporte == '':
+            mensaje_errores.append('Debe ingresar un deporte para la competencia.')
+
+        for lugar in self.glade.get_object('lugares').get_children():
+            if lugar.get_active():
+                if lugar.get_disponibilidad() == '':
+                    mensaje_errores.append('Debe ingresar la disponibilidad para {}.'.format(lugar.get_label()))
+
+        if mensaje_errores:
+            self.mostrar_error(*mensaje_errores)
+            return
+
+        modalidades = self.glade.get_object('liga').get_group()
+        modalidad = None
+        for boton in modalidades:
+            if boton.get_active():
+                modalidad = gtk.Buildable.get_name(boton)
+                break
+
+        puntuaciones = self.glade.get_object('porsets').get_group()
+        puntuacion = None
+        for boton in puntuaciones:
+            if boton.get_active():
+                puntuacion = gtk.Buildable.get_name(boton)
+
+        cantidad_sets = self.glade.get_object('spinbutton1').get_value()
+        tantos_presentismo = self.glade.get_object('spinbutton2').get_value()
+        puntos_empate = self.glade.get_object('spinEmpate').get_value()
+        puntos_victoria = self.glade.get_object('spinbutton4').get_value()
+        puntos_presentarse = self.glade.get_object('spinbutton5').get_value()
+        text_buffer = self.glade.get_object("textview1").get_buffer()
+        reglamento = text_buffer.get_text(text_buffer.get_start_iter(), text_buffer.get_end_iter())
+
+        dto = DTOCompetencia(None, nombre, puntuacion, 'Creada', reglamento, self.id_usuario, None, modalidad,
+                            cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate)
+
+        GestorCompetencia.get_instance().nueva_competencia(dto)
+
+    def destroy(self, widget):
+        gtk.main_quit()
+
+
+class CuadroLugar(gtk.HBox):
+    """Muestra el nombre de un lugar con su cuadro para disponibilidad"""
+    def __init__(self, nombre):
+        super(CuadroLugar, self).__init__()
+        self.nombre = nombre
+        
+        self.check = gtk.CheckButton(nombre)
+        self.disponibilidad = gtk.Entry()
+        self.disponibilidad.set_width_chars(3)
+        self.pack_start(self.check, True, True, 15)
+        self.pack_start(self.disponibilidad, False, True, 0)
+
+    def get_disponibilidad(self):
+        return self.disponibilidad.get_text()
+
+    def get_active(self):
+        return self.check.get_active()
+
+    def get_label(self):
+        return self.check.get_label()
+
+    def set_label(self, text):
+        self.check.set_label(text)
+
 if __name__ == '__main__':
-    a = ListarMisCompetencias(0)
+    a = NuevaCompetencia(0)
     gtk.main()
