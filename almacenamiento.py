@@ -324,3 +324,26 @@ class Set(Base):
 
     def __repr__(self):
         return '<Set(%r, %r, %r)>' % (self.numero, self.puntaje_de_local, self.puntaje_de_visitante)
+
+class DTOCompetencia(Base):
+    """Almacena informacion de una competencia"""
+    
+    __tablename__ = 'dtocompetencia'
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String, nullable=False)
+    tipo_puntuacion = Column(String)
+    cantidad_de_sets = Column(Integer)
+    reglamento = Column(String)
+    estado = Column(String)
+    puntuacion = Column(String)
+    dada_de_baja = Column(Boolean)
+    fecha_de_baja = Column(Date)
+    id_usuario = Column(Integer, ForeignKey('usuario.id'))
+    tipo = Column(String, nullable=False)
+    puntos_por_set = Column(Integer)
+    puntos_por_ganar = Column(Integer)
+    puntos_por_empate = Column(Integer)
+
+    def __repr__(self):
+        return '<DTOCompetencia(%r, %r, %r)>' % (self.nombre, self.estado, self.tipo)
