@@ -142,7 +142,7 @@ class CompetenciaLiga(Competencia):
     __tablename__ = 'liga'
 
     id = Column(Integer, ForeignKey('competencia.id'), primary_key=True)
-    puntos_por_set = Column(Integer)
+    puntos_por_presentarse = Column(Integer)
     puntos_por_ganar = Column(Integer)
     puntos_por_empate = Column(Integer)
 
