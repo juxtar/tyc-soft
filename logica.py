@@ -116,7 +116,7 @@ class GestorBaseDeDatos(Singleton):
 class DTOCompetencia:
     """Almacena información para la transfrencia de datos de una competencia"""
     def __init__(self, id_competencia, nombre, tipo_puntuacion, estado, reglamento, dada_de_baja, fecha_de_baja,
-                id_usuario, tipo, cantidad_de_sets, puntos_por_set, puntos_por_ganar, puntos_por_empate):
+                id_usuario, nombre_usuario, tipo, cantidad_de_sets, puntos_por_set, puntos_por_ganar, puntos_por_empate):
         self.id = id_competencia
         self.nombre = nombre
         self.tipo_puntuacion = tipo_puntuacion
@@ -125,6 +125,7 @@ class DTOCompetencia:
         self.dada_de_baja = dada_de_baja
         self.fecha_de_baja = fecha_de_baja
         self.id_usuario = id_usuario
+        self.nombre_usuario = nombre_usuario
         self.tipo = tipo
         self.cantidad_de_sets = cantidad_de_sets
         self.puntos_por_set = puntos_por_set

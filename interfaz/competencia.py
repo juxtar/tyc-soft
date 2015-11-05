@@ -28,6 +28,7 @@ class ListarMisCompetencias(Interfaz):
         estado_box = self.glade.get_object('comboEstado')
 
         parametros = {  'nombre': nombre_box.get_text(),
+                        'id_usuario': self.id_usuario,
                         'deporte': deporte_box.get_model()[deporte_box.get_active()][0],
                         'modalidad': modalidad_box.get_model()[modalidad_box.get_active()][0],
                         'estado': estado_box.get_model()[estado_box.get_active()][0]
@@ -38,7 +39,12 @@ class ListarMisCompetencias(Interfaz):
             if value == '':
                 parametros[key] = None
 
-        # Llamada a listar_competencias de GestorCompetencia
+        lista_competencias = GestorCompetencia.get_instance().listar_competencias(id_competencia=None, **parametros)
+
+        modelo = self.glade.get_object('treeview1').get_model()
+        modelo.clear()
+        for competencia in lista_competencias:
+            modelo.append([competencia.nombre, competencia.deporte, competencia.modalidad, competencia.estado, competencia.nombre_usuario])
 
     def volver(self, widget):
         self.destroy(None) # Temporal por esta entrega
