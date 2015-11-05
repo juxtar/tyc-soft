@@ -112,3 +112,24 @@ class GestorBaseDeDatos(Singleton):
     def listar_lugar(self, id_usuario):
         return self.session.query(Lugar).filter(Lugar.id_usuario == id_usuario).all()
         pass
+
+class DTOCompetencia:
+    """Almacena información para la transfrencia de datos de una competencia"""
+    def __init__(self, id_competencia, nombre, tipo_puntuacion, estado, reglamento, dada_de_baja, fecha_de_baja,
+                id_usuario, tipo, cantidad_de_sets, puntos_por_set, puntos_por_ganar, puntos_por_empate):
+        self.id = id_competencia
+        self.nombre = nombre
+        self.tipo_puntuacion = tipo_puntuacion
+        self.estado = estado
+        self.reglamento = reglamento
+        self.dada_de_baja = dada_de_baja
+        self.fecha_de_baja = fecha_de_baja
+        self.id_usuario = id_usuario
+        self.tipo = tipo
+        self.cantidad_de_sets = cantidad_de_sets
+        self.puntos_por_set = puntos_por_set
+        self.puntos_por_ganar = puntos_por_ganar
+        self.puntos_por_empate = puntos_por_empate
+        
+    def __repr__(self):
+        return '<DTOCompetencia(%r, %r, %r)>' % (self.nombre, self.estado, self.tipo)
