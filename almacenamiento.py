@@ -119,12 +119,14 @@ class Competencia(Base):
     cantidad_de_sets = Column(Integer)
     reglamento = Column(String)
     estado = Column(String)
-    puntuacion = Column(String)
+    tantos_presentismo = Column(Integer)
     dada_de_baja = Column(Boolean)
     fecha_de_baja = Column(Date)
     id_usuario = Column(Integer, ForeignKey('usuario.id'))
     tipo = Column(String, nullable=False)
+    id_deporte = Column(Integer, ForeignKey('deporte.id'))
 
+    deporte = relationship("Deporte")
     lugares = relationship("Lugar",
                     secondary=tabla_alberga)
     participante = relationship("Participante")
