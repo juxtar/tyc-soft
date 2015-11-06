@@ -17,11 +17,36 @@ class Singleton:
 
 
 class GestorCompetencia(Singleton):
-    """Realiza tareas correspondiente al manejo de clases Participante"""
+    """Realiza tareas correspondiente al manejo de clases Competencia"""
     def __init__(self):
         pass
-    def nueva_competencia(self, nombre = None, deporte = None, lugares = None, ):
-        pass
+    def nueva_competencia(self, DTOCompetencia):
+        lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias()
+        deporte = GestorBaseDeDatos.get_instance().listar_deportes(nombre = DTOCompetencia.nombre)
+        lista_lugares = []
+        for DTOLugares in DTOCompetencia.lugares:
+            lugar = GestorLugar.get_instance().listar_lugar(DTOLugares.id)
+            lista_lugares.append(lugar)
+        for competencias in lista_competencias:
+            if DTOCompetencia.nombre == competencia.nombre:
+                """ERROR"""
+        if DTOCompetencia.tipo == 'eliminatoriasimple':
+            nuevaCompetencia= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
+             lugares= lista_lugares, deporte = deporte)
+        elif DTOCompetencia.tipo == 'eliminatoriadoble':
+            nuevaCompetencia= CompetenciaElimiatoriaDoble(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
+             lugares= lista_lugares, deporte = deporte)
+        else:
+            nuevaCompetencia= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
+            lugares= lista_lugares, puntos_por_presentarse = DTOCompetencia.puntos_por_presentarse, puntos_por_ganar = DTOCompetencia.puntos_por_ganar, 
+            puntos_por_empate = DTOCompetencia.puntos_por_empate, deporte = deporte)
+
+        GestorBaseDeDatos.get_instance().agregar_competencia(nuevaCompetencia)
+        return 1
+
     def eliminar_competencia(self):
         pass
     def listar_competencias(self, id_competencia = None, nombre=None, id_usuario = None, deporte = None, modalidad = None, estado = None):
@@ -33,23 +58,23 @@ class GestorCompetencia(Singleton):
             if competencia.tipo =='eliminatoriasimple' or competencia.tipo =='eliminatoriadoble':
                  lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, 
                     competencia.reglamento, competencia.id_usuario, usuario.nombre,
-                    competencia.tipo, competencia.cantidad_de_sets, None, None, None))
+                    competencia.tipo, competencia.cantidad_de_sets, None, None, None, competencia.deporte.nombre, None, caompetencia.tantos_presentismo))
             else:
                 lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, 
                     competencia.estado, competencia.reglamento, competencia.dada_de_baja, competencia.fecha_de_baja, 
                     competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, 
-                    competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate))
+                    competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         else:
             lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
             for competencia in lista_competencias:
                 usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
                 if competencia.tipo == 'eliminatoriasimple' or competencia.tipo == 'eliminatoriadoble':
                     lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento, 
-                        competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, None, None, None))
+                        competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, None, None, None, competencia.deporte.nombre, None, competencia.tantos_presentismo))
                 else: 
                     lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento, 
                         competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, 
-                        competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate))
+                        competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         return lista_DTOs
 
     def generar_fixture(self):
@@ -121,8 +146,13 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(deporte)
         self.session.commit()
     
-    def listar_deportes(self):
-        return self.session.query(Deporte).all()
+    def listar_deportes(self, nombre= None):
+        query = self.session.query(Deporte)
+        if nombre is not None:
+            query = query.filter(Deporte.nombre == nombre)
+            return query.one()
+        else:
+            return query.all()
    
     def agregar_participante(self, participante):
         self.session.add(participante)
@@ -151,13 +181,19 @@ class GestorBaseDeDatos(Singleton):
         if deporte is not None:
             query = query.filter(Competencia.deporte == deporte)
         if modalidad is not None:
-            query = query.filter(Competencia.modalidad == modalidad)
+            query = query.filter(Competencia.tipo == modalidad)
         if estado is not None:
             query = query.filter(Competencia.estado == estado)
         return query.all()
 
-    def listar_lugar(self, id_usuario):
-        return self.session.query(Lugar).filter(Lugar.id_usuario == id_usuario).all()
+    def listar_lugar(self, id_usuario= None, id_lugar = None):
+        query = self.session.query(Lugar)
+        if id_lugar is not None:
+            query=query.filter(Lugar.id = id_lugar)
+            return query.one()
+        if id_usuario is not None:
+            query = query(Lugar).filter(Lugar.id_usuario == id_usuario)
+            return query.all()
 
 
 class GestorUsuario(Singleton):
@@ -175,19 +211,22 @@ class GestorLugar(Singleton):
     def __init__(self):
         pass
 
-    def listar_lugar(self, id_usuario):
-        lista_dto = []
-        lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario)
-        for lugar in listar_lugar:
-            dto = DTOLugar(lugar.id, lugar.nombre, lugar.descripcion, None)
-            lista_dto.append(dto)
-        return lista_dto
+    def listar_lugar(self, id_usuario = None, id_lugar = None):
+        if id_lugar is not None:
+           return GestorBaseDeDatos.get_instance().listar_lugar(id_lugar=id_lugar)
+        is id_usuario is not None:
+            lista_dto = []
+            lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario= id_usuario)
+            for lugar in listar_lugar:
+                dto = DTOLugar(lugar.id, lugar.nombre, lugar.descripcion, None)
+                lista_dto.append(dto)
+            return lista_dto
 
 
 class DTOCompetencia:
     """Almacena informacion para la transfrencia de datos de una competencia"""
     def __init__(self, id_competencia, nombre, tipo_puntuacion, estado, reglamento,
-                id_usuario, nombre_usuario, tipo, cantidad_de_sets, puntos_por_presentarse, puntos_por_ganar, puntos_por_empate):
+                id_usuario, nombre_usuario, tipo, cantidad_de_sets, puntos_por_presentarse, puntos_por_ganar, puntos_por_empate, deporte, lugares, tantos_presentismo):
         self.id = id_competencia
         self.nombre = nombre
         self.tipo_puntuacion = tipo_puntuacion
@@ -200,6 +239,9 @@ class DTOCompetencia:
         self.puntos_por_presentarse = puntos_por_presentarse
         self.puntos_por_ganar = puntos_por_ganar
         self.puntos_por_empate = puntos_por_empate
+        self.deporte = deporte
+        self.lugares = lugares
+        self.tantos_presentismo = tantos_presentismo
         
     def __repr__(self):
         return '<DTOCompetencia(%r, %r, %r)>' % (self.nombre, self.estado, self.tipo)
