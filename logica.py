@@ -27,28 +27,28 @@ class GestorCompetencia(Singleton):
         """Realiza la correspondiente busqueda de competencias, devuelve una lista de DTOs Competencias"""
         lista_DTOs = []
         if id_competencia is not None:
-            lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
-            nombreuser = GestorUsuario.get_instance().obtener_usuario(lista_competencia.id_usuario)
-            if lista_competencias.tipo =='eliminatoriasimple' or lista_competencias.tipo =='eliminatoriadoble':
-                 lista_DTOs.append(DTOCompetencia(lista_competencias.id, lista_competencias.nombre, lista_competencias.tipo_puntuacion, lista_competencias.estado, 
-                    lista_competencias.reglamento, lista_competencias.dada_de_baja, lista_competencias.fecha_de_baja, lista_competencias.id_usuario, nombreuser.nombre,
-                    lista_competencias.tipo, lista_competencias.cantidad_de_sets, None, None, None))
+            competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
+            usuario = GestorUsuario.get_instance().obtener_usuario(lista_competencia.id_usuario)
+            if competencia.tipo =='eliminatoriasimple' or competencia.tipo =='eliminatoriadoble':
+                 lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, 
+                    competencia.reglamento, competencia.id_usuario, usuario.nombre,
+                    competencia.tipo, competencia.cantidad_de_sets, None, None, None))
             else:
-                lista_DTOs.append(DTOCompetencia(lista_competencias.id, lista_competencias.nombre, lista_competencias.tipo_puntuacion, 
-                    lista_competencias.estado, lista_competencias.reglamento, lista_competencias.dada_de_baja, lista_competencias.fecha_de_baja, 
-                    lista_competencias.id_usuario, None, lista_competencias.tipo, lista_competencias.cantidad_de_sets, 
-                    lista_competencias.puntos_por_set, lista_competencias.puntos_por_ganar, lista_competencias.puntos_por_empate))
+                lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, 
+                    competencia.estado, competencia.reglamento, competencia.dada_de_baja, competencia.fecha_de_baja, 
+                    competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, 
+                    competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate))
         else:
             lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
-            for i in lista_competencias:
-                nombreuser = GestorUsuario.get_instance().obtener_usuario(i.id_usuario)
-                if i.tipo == 'eliminatoriasimple' or i.tipo == 'eliminatoriadoble':
-                    lista_DTOs.append(DTOCompetencia(i.id, i.nombre, i.tipo_puntuacion, i.estado, i.reglamento, i.dada_de_baja, 
-                        i.fecha_de_baja, i.id_usuario, nombreuser.nombre, i.tipo, i.cantidad_de_sets, None, None, None))
+            for competencia in lista_competencias:
+                usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
+                if competencia.tipo == 'eliminatoriasimple' or competencia.tipo == 'eliminatoriadoble':
+                    lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento, 
+                        competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, None, None, None))
                 else: 
-                    lista_DTOs.append(DTOCompetencia(i.id, i.nombre, i.tipo_puntuacion, i.estado, i.reglamento, 
-                        i.dada_de_baja, i.fecha_de_baja, i.id_usuario, nombreuser.nombre, i.tipo, i.cantidad_de_sets, 
-                        i.puntos_por_set, i.puntos_por_ganar, i.puntos_por_empate))
+                    lista_DTOs.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento, 
+                        competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, 
+                        competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate))
         return lista_DTOs
 
     def generar_fixture(self):
@@ -160,20 +160,18 @@ class GestorBaseDeDatos(Singleton):
 
 class DTOCompetencia:
     """Almacena informacion para la transfrencia de datos de una competencia"""
-    def __init__(self, id_competencia, nombre, tipo_puntuacion, estado, reglamento, dada_de_baja, fecha_de_baja,
-                id_usuario, nombre_usuario, tipo, cantidad_de_sets, puntos_por_set, puntos_por_ganar, puntos_por_empate):
+    def __init__(self, id_competencia, nombre, tipo_puntuacion, estado, reglamento,
+                id_usuario, nombre_usuario, tipo, cantidad_de_sets, puntos_por_presentarse, puntos_por_ganar, puntos_por_empate):
         self.id = id_competencia
         self.nombre = nombre
         self.tipo_puntuacion = tipo_puntuacion
         self.estado = estado
         self.reglamento = reglamento
-        self.dada_de_baja = dada_de_baja
-        self.fecha_de_baja = fecha_de_baja
         self.id_usuario = id_usuario
         self.nombre_usuario = nombre_usuario
         self.tipo = tipo
         self.cantidad_de_sets = cantidad_de_sets
-        self.puntos_por_set = puntos_por_set
+        self.puntos_por_presentarse = puntos_por_presentarse
         self.puntos_por_ganar = puntos_por_ganar
         self.puntos_por_empate = puntos_por_empate
         

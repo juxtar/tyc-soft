@@ -36,19 +36,33 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="button1">
-            <property name="use_action_appearance">False</property>
+          <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="cerrar_error" swapped="no"/>
+            <property name="can_focus">False</property>
             <child>
-              <object class="GtkImage" id="image2">
+              <object class="GtkButton" id="button1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="stock">gtk-close</property>
-                <property name="icon-size">1</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="cerrar_error" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="stock">gtk-close</property>
+                    <property name="icon-size">2</property>
+                  </object>
+                </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
