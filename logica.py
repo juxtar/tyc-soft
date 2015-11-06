@@ -15,6 +15,7 @@ class Singleton:
             cls.instancia = cls()
         return cls.instancia
 
+
 class GestorCompetencia(Singleton):
     """Realiza tareas correspondiente al manejo de clases Participante"""
     def __init__(self):
@@ -59,6 +60,7 @@ class GestorCompetencia(Singleton):
         pass
     def eliminar_fiture(self):
         pass
+
 
 class GestorParticipante(Singleton):
     """Realiza tareas correspondiente al manejo de clases Participante"""
@@ -145,7 +147,31 @@ class GestorBaseDeDatos(Singleton):
 
     def listar_lugar(self, id_usuario):
         return self.session.query(Lugar).filter(Lugar.id_usuario == id_usuario).all()
+
+
+class GestorUsuario(Singleton):
+    """Realiza tareas correspondiente al manejo de clases Usuario"""
+    def __init__(self):
         pass
+    def obtener_usuario(self, id_usuario):
+        """Obtiene, teniendo un id de usuario, el objeto Usuario correspondiente a este id"""
+        user = GestorBaseDeDatos.get_instance().listar_usuario(id_usuario)
+        return user
+
+
+class GestorLugar(Singleton):
+    """Realiza tareas correspondientes al manejo de clases Lugar"""
+    def __init__(self):
+        pass
+
+    def listar_lugar(self, id_usuario):
+        lista_dto = []
+        lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario)
+        for lugar in listar_lugar:
+            dto = DTOLugar(lugar.id, lugar.nombre, lugar.descripcion, None)
+            lista_dto.append(dto)
+        return lista_dto
+
 
 class DTOCompetencia:
     """Almacena informacion para la transfrencia de datos de una competencia"""
@@ -167,11 +193,15 @@ class DTOCompetencia:
     def __repr__(self):
         return '<DTOCompetencia(%r, %r, %r)>' % (self.nombre, self.estado, self.tipo)
 
-class GestorUsuario(Singleton):
-    """Realiza tareas correspondiente al manejo de clases Usuario"""
-    def __init__(self):
-        pass
-    def obtener_usuario(self, id_usuario):
-        """Obtiene, teniendo un id de usuario, el objeto Usuario correspondiente a este id"""
-        user = GestorBaseDeDatos.get_instance().listar_usuario(id_usuario)
-        return user
+
+class DTOLugar:
+    """Almacena informacion para la transfrencia de datos de un lugar"""
+    def __init__(self, id_lugar, nombre, descripcion, disponibilidad):
+        super(DTOLugar, self).__init__()
+        self.id = id_lugar
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.disponibilidad = disponibilidad
+    
+    def __repr__(self):
+        return '<DTOLugar(%r, %r, %r)>' % (self.nombre, self.descripcion, self.disponibilidad)
