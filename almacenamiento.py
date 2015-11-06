@@ -96,8 +96,8 @@ class Sede(Base):
     
     __tablename__ = 'sede'
 
-    id_competencia = Column(Integer, ForeignKey('competencia.id')),
-    id_lugar = Column(Integer, ForeignKey('lugar.id')),
+    id_competencia = Column(Integer, ForeignKey('competencia.id'), primary_key=True)
+    id_lugar = Column(Integer, ForeignKey('lugar.id'), primary_key=True)
     disponibilidad = Column(Integer)
 
     lugar = relationship("Lugar")

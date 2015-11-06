@@ -71,7 +71,7 @@ class GestorCompetencia(Singleton):
             else:
                 lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
                     competencia.estado, competencia.reglamento, competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
-                    competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
+                    competencia.puntos_por_presentarse, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         else:
             lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
             for competencia in lista_competencias:
@@ -82,7 +82,7 @@ class GestorCompetencia(Singleton):
                 else: 
                     lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento,
                         competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, 
-                        competencia.puntos_por_set, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
+                        competencia.puntos_por_presentarse, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         return lista_dtos
 
     def generar_fixture(self):
@@ -133,7 +133,7 @@ class GestorParticipante(Singleton):
 class GestorBaseDeDatos(Singleton):
     """Realiza tareas correspondientes a las interacciones con la Base de Datos"""
     def __init__(self):
-        engine = create_engine('sqlite:///pyged.db', echo=True)
+        engine = create_engine('sqlite:///pyged.db', echo=True, convert_unicode=True)
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -187,7 +187,7 @@ class GestorBaseDeDatos(Singleton):
         if id_usuario is not None:
             query = query.filter(Competencia.id_usuario == id_usuario)
         if deporte is not None:
-            query = query.filter(Competencia.deporte == deporte)
+            query = query.join(Deporte).filter(Deporte.nombre == deporte)
         if modalidad is not None:
             query = query.filter(Competencia.tipo == modalidad)
         if estado is not None:
