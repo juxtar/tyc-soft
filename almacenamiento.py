@@ -91,11 +91,16 @@ class Lugar(Base):
     def __repr__(self):
         return '<Lugar(%r)>' % (self.nombre)
 
-tabla_alberga = Table('alberga', Base.metadata,
-    Column('id_competencia', Integer, ForeignKey('competencia.id')),
-    Column('id_lugar', Integer, ForeignKey('lugar.id')),
-    Column('disponibilidad', Integer)
-)
+class Sede(Base):
+    """Almacena informacion de una sede"""
+    
+    __tablename__ = 'sede'
+
+    id_competencia = Column(Integer, ForeignKey('competencia.id')),
+    id_lugar = Column(Integer, ForeignKey('lugar.id')),
+    disponibilidad = Column(Integer)
+
+    lugar = relationship("Lugar")
 
 class Deporte(Base):
     """Almacena informacion de un deporte"""
@@ -127,8 +132,7 @@ class Competencia(Base):
     id_deporte = Column(Integer, ForeignKey('deporte.id'))
 
     deporte = relationship("Deporte")
-    lugares = relationship("Lugar",
-                    secondary=tabla_alberga)
+    sedes = relationship("Sede")
     participante = relationship("Participante")
 
     __mapper_args__ = {

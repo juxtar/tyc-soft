@@ -5,8 +5,9 @@ import gtk.glade
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from logica import GestorCompetencia, DTOCompetencia, GestorLugar
+from logica import GestorCompetencia, DTOCompetencia, GestorLugar, NombreExistente
 from main import agregar_cuadro_error, Interfaz
+from aviso import Exito
 
 main = gtk.main
 
@@ -191,9 +192,15 @@ class NuevaCompetencia(Interfaz):
         reglamento = text_buffer.get_text(text_buffer.get_start_iter(), text_buffer.get_end_iter())
 
         dto = DTOCompetencia(None, nombre, puntuacion, 'Creada', reglamento, self.id_usuario, None, modalidad,
-                            cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate)
+                            cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate, deporte,
+                            lugares, tantos_presentismo)
 
-        GestorCompetencia.get_instance().nueva_competencia(dto)
+        try:
+            exito = GestorCompetencia.get_instance().nueva_competencia(dto)
+        except NombreExistente:
+            self.mostrar_error('Ya existe una competencia con ese nombre.')
+        if exito is 1:
+            Exito(self.main_window)
 
     def destroy(self, widget):
         gtk.main_quit()
