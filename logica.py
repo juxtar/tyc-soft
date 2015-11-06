@@ -112,7 +112,18 @@ class GestorBaseDeDatos(Singleton):
     def agregar_competencia(self, competencia):
         self.session.add(competencia)
         self.session.commit()
+        
+    def agregar_lugar(self, lugar):
+        self.session.add(lugar)
+        self.session.commit()
 
+    def agregar_deporte(self, deporte):
+        self.session.add(deporte)
+        self.session.commit()
+    
+    def listar_deportes(self):
+        return self.session.query(Deporte).all()
+   
     def agregar_participante(self, participante):
         self.session.add(participante)
         self.session.commit()
