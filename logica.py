@@ -31,20 +31,20 @@ class GestorCompetencia(Singleton):
             if DTOCompetencia.nombre == competencia.nombre:
                 """ERROR"""
         if DTOCompetencia.tipo == 'eliminatoriasimple':
-            nuevaCompetencia= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
              lugares= lista_lugares, deporte = deporte)
         elif DTOCompetencia.tipo == 'eliminatoriadoble':
-            nuevaCompetencia= CompetenciaElimiatoriaDoble(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaElimiatoriaDoble(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
              lugares= lista_lugares, deporte = deporte)
         else:
-            nuevaCompetencia= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
             lugares= lista_lugares, puntos_por_presentarse = DTOCompetencia.puntos_por_presentarse, puntos_por_ganar = DTOCompetencia.puntos_por_ganar, 
             puntos_por_empate = DTOCompetencia.puntos_por_empate, deporte = deporte)
 
-        GestorBaseDeDatos.get_instance().agregar_competencia(nuevaCompetencia)
+        GestorBaseDeDatos.get_instance().agregar_competencia(competencia_new)
         return 1
 
     def eliminar_competencia(self):
@@ -189,7 +189,7 @@ class GestorBaseDeDatos(Singleton):
     def listar_lugar(self, id_usuario= None, id_lugar = None):
         query = self.session.query(Lugar)
         if id_lugar is not None:
-            query=query.filter(Lugar.id = id_lugar)
+            query = query.filter(Lugar.id == id_lugar)
             return query.one()
         if id_usuario is not None:
             query = query(Lugar).filter(Lugar.id_usuario == id_usuario)
@@ -214,7 +214,7 @@ class GestorLugar(Singleton):
     def listar_lugar(self, id_usuario = None, id_lugar = None):
         if id_lugar is not None:
            return GestorBaseDeDatos.get_instance().listar_lugar(id_lugar=id_lugar)
-        is id_usuario is not None:
+        if id_usuario is not None:
             lista_dto = []
             lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario= id_usuario)
             for lugar in listar_lugar:
