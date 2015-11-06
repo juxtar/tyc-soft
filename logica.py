@@ -22,24 +22,24 @@ class GestorCompetencia(Singleton):
         pass
     def nueva_competencia(self, DTOCompetencia):
         lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias()
-        deporte = GestorBaseDeDatos.get_instance().listar_deportes(nombre = DTOCompetencia.nombre)
+        deporte = GestorBaseDeDatos.get_instance().listar_deportes(nombre = DTOCompetencia.deporte)
         lista_lugares = []
         for DTOLugares in DTOCompetencia.lugares:
-            lugar = GestorLugar.get_instance().listar_lugar(DTOLugares.id)
+            lugar = GestorLugar.get_instance().listar_lugar(id_lugar = DTOLugares.id)
             lista_lugares.append(lugar)
         for competencias in lista_competencias:
-            if DTOCompetencia.nombre == competencia.nombre:
+            if DTOCompetencia.nombre == competencias.nombre:
                 """ERROR"""
         if DTOCompetencia.tipo == 'eliminatoriasimple':
-            competencia_new= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaEliminatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
              lugares= lista_lugares, deporte = deporte)
         elif DTOCompetencia.tipo == 'eliminatoriadoble':
-            competencia_new= CompetenciaElimiatoriaDoble(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaEliminatoriaDoble(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
              lugares= lista_lugares, deporte = deporte)
         else:
-            competencia_new= CompetenciaElimiatoriaSimple(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
+            competencia_new= CompetenciaLiga(nombre= DTOCompetencia.nombre, tipo_puntuacion=DTOCompetencia.tipo_puntuacion, cantidad_de_sets=DTOCompetencia.cantidad_de_sets,
             reglamento=DTOCompetencia.reglamento, estado='Creada', tantos_presentismo = DTOCompetencia.tantos_presentismo, id_usuario= DTOCompetencia.id_usuario,
             lugares= lista_lugares, puntos_por_presentarse = DTOCompetencia.puntos_por_presentarse, puntos_por_ganar = DTOCompetencia.puntos_por_ganar, 
             puntos_por_empate = DTOCompetencia.puntos_por_empate, deporte = deporte)
@@ -192,7 +192,7 @@ class GestorBaseDeDatos(Singleton):
             query = query.filter(Lugar.id == id_lugar)
             return query.one()
         if id_usuario is not None:
-            query = query(Lugar).filter(Lugar.id_usuario == id_usuario)
+            query = query.filter(Lugar.id_usuario == id_usuario)
             return query.all()
 
 
@@ -217,7 +217,7 @@ class GestorLugar(Singleton):
         if id_usuario is not None:
             lista_dto = []
             lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario= id_usuario)
-            for lugar in listar_lugar:
+            for lugar in lista_lugares:
                 dto = DTOLugar(lugar.id, lugar.nombre, lugar.descripcion, None)
                 lista_dto.append(dto)
             return lista_dto
@@ -250,7 +250,6 @@ class DTOCompetencia:
 class DTOLugar:
     """Almacena informacion para la transfrencia de datos de un lugar"""
     def __init__(self, id_lugar, nombre, descripcion, disponibilidad):
-        super(DTOLugar, self).__init__()
         self.id = id_lugar
         self.nombre = nombre
         self.descripcion = descripcion
