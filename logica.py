@@ -107,6 +107,10 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(usuario)
         self.session.commit()
 
+    def agregar_lugar(self, lugar):
+        self.session.add(lugar)
+        self.session.commit()
+
     def agregar_competencia(self, competencia):
         self.session.add(competencia)
         self.session.commit()
@@ -115,8 +119,15 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(participante)
         self.session.commit()
 
+    def agregar_deporte(self, deporte):
+        self.session.add(deporte)
+        self.session.commit()
+
     def modificar_competencia(self, competencia):
         self.session.commit()
+
+    def listar_deportes(self):
+        return self.session.query(Deporte).all()
 
     def listar_usuario(self, id_usuario):
         query = self.session.query(Usuario)
@@ -177,3 +188,10 @@ class GestorUsuario(Singleton):
         """Obtiene, teniendo un id de usuario, el objeto Usuario correspondiente a este id"""
         user = GestorBaseDeDatos.get_instance().listar_usuario(id_usuario)
         return user
+
+class GestorLugar(Singleton):
+    """Realiza tareas correspondientes al manejo de lugares deportivos"""
+    def __init__(self):
+        pass
+    def listar_lugares(self, id_usuario):
+        return GestorBaseDeDatos.get_instance().listar_lugares(id_usuario)
