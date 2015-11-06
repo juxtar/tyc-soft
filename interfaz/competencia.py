@@ -5,7 +5,7 @@ import gtk.glade
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from logica import GestorCompetencia, DTOCompetencia, GestorLugar, NombreExistente
+from logica import GestorCompetencia, GestorLugar, NombreExistente, DTOCompetencia, DTOLugar
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 
@@ -86,7 +86,7 @@ class ListarMisCompetencias(Interfaz):
         pass
 
     def nueva_competencia(self, widget):
-        pass
+        n = NuevaCompetencia(self.id_usuario)
 
     def destroy(self, widget):
         gtk.main_quit()
@@ -109,7 +109,7 @@ class NuevaCompetencia(Interfaz):
 
         lista_lugares = GestorLugar.get_instance().listar_lugar(id_usuario)
         for lugar in lista_lugares:
-            cuadrolugar = CuadroLugar(lugar.nombre)
+            cuadrolugar = CuadroLugar(lugar.id, lugar.nombre)
             self.glade.get_object('lugares').pack_start(cuadrolugar, False, True, 2)
             cuadrolugar.show_all()
 
@@ -120,7 +120,7 @@ class NuevaCompetencia(Interfaz):
         self.main_window.show_all()
 
     def volver(self, widget):
-        self.destroy(None) # Temporal por esta entrega
+        self.main_window.hide()
 
     def dinamizar(self, widget):
         nombre = gtk.Buildable.get_name(widget)
@@ -190,6 +190,12 @@ class NuevaCompetencia(Interfaz):
         puntos_presentarse = self.glade.get_object('spinbutton5').get_value()
         text_buffer = self.glade.get_object("textview1").get_buffer()
         reglamento = text_buffer.get_text(text_buffer.get_start_iter(), text_buffer.get_end_iter())
+        datos_lugares = [
+                        {'id_lugar':lugar.id, 'nombre':lugar.nombre, 'disponibilidad':lugar.get_disponibilidad(),
+                         'descripcion':None}
+                        for lugar in self.glade.get_object('lugares').get_children() if lugar.get_active()
+                        ]
+        lugares = [DTOLugar(**datos) for datos in datos_lugares]
 
         dto = DTOCompetencia(None, nombre, puntuacion, 'Creada', reglamento, self.id_usuario, None, modalidad,
                             cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate, deporte,
@@ -197,20 +203,21 @@ class NuevaCompetencia(Interfaz):
 
         try:
             exito = GestorCompetencia.get_instance().nueva_competencia(dto)
+            if exito is 1:
+                Exito(self.main_window)
         except NombreExistente:
             self.mostrar_error('Ya existe una competencia con ese nombre.')
-        if exito is 1:
-            Exito(self.main_window)
 
     def destroy(self, widget):
-        gtk.main_quit()
+        self.main_window.hide()
 
 
 class CuadroLugar(gtk.HBox):
     """Muestra el nombre de un lugar con su cuadro para disponibilidad"""
-    def __init__(self, nombre):
+    def __init__(self, id_lugar, nombre):
         super(CuadroLugar, self).__init__()
         self.nombre = nombre
+        self.id = id_lugar
         
         self.check = gtk.CheckButton(nombre)
         self.disponibilidad = gtk.Entry()

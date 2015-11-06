@@ -19,3 +19,4 @@ class Exito:
 
     def destroy(self, widget):
         self.main_window.hide()
+        self.ventana_padre.hide()
