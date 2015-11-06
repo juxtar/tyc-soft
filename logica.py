@@ -125,7 +125,7 @@ class GestorParticipante(Singleton):
 class GestorBaseDeDatos(Singleton):
     """Realiza tareas correspondientes a las interacciones con la Base de Datos"""
     def __init__(self):
-        engine = create_engine('sqlite:///prueba.db', echo=True)
+        engine = create_engine('sqlite:///pyged.db', echo=True)
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
