@@ -193,7 +193,6 @@ class Participante(Base):
     nombre = Column(String, nullable=False)
     correo_electronico = Column(String, nullable=False, unique=True)
     id_competencia = Column(Integer, ForeignKey('competencia.id'))
-
     historial_nombres = relationship("HistorialNombres")
 
     def __repr__(self):

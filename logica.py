@@ -113,7 +113,7 @@ class GestorParticipante(Singleton):
                 """Este participante ya existe en esta competencia"""
             if i.correo_electronico == dto.correo_electronico:
                 """Este correo electronico ya existe en esta competencia"""
-        part = Participante(nombre=dto.nombre, correo_electroonico = dto.correo_electroonico, imagen = dto.imagen)
+        part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico, imagen = dto.imagen)
         GestorBaseDeDatos.get_instance().agregar_participante(part)
         
 
@@ -123,8 +123,18 @@ class GestorParticipante(Singleton):
     def eliminar_participante(self):
         pass
 
-    def listar_participantes(self):
-        pass
+    def listar_participantes(self, id_competencia = None):
+        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia= id_competencia)
+        lista = []
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
+        for participante in listar_participantes:
+            historial = GestorBaseDeDatos.get_instance().listar_historial(participante.id)
+            nombresEnHistorial = []
+            for nombre in historial:
+                nombresEnHistorial.add(historial.nombre)
+            dto_participante = DTOParticipante(participante.id, participante.nombre, participante.correo_electronico, competencia.nombre, nombresEnHistorial)
+            lista.add(dto_participante)
+        return lista
 
     def registrar_historial(self):
         pass
@@ -173,6 +183,11 @@ class GestorBaseDeDatos(Singleton):
         query = self.session.query(Usuario)
         query = query.filter(Usuario.id == id_usuario)
         return query.one()
+
+    def listar_hitorial(self, id_participante):
+        query = self.session.query(HistorialNombres)
+        query = query.filter(HistorialNombres.id_participante == id_participante)
+        return query.all()
 
     def listar_participantes(self, id_competencia):
         return self.session.query(Participante).filter(Participante.id_competencia == id_competencia).all()
@@ -229,6 +244,19 @@ class GestorLugar(Singleton):
                 dto = DTOLugar(lugar.id, lugar.nombre, lugar.descripcion, None)
                 lista_dto.append(dto)
             return lista_dto
+
+
+class DTOParticipante:
+    """Almacena informacion para la transfrencia de datos de una competencia"""
+    def __init__(self, id_participante, nombre, correo_electronico, id_competencia, historial_nombre):
+        self.id = id_participante
+        self.nombre = nombre
+        self.correo_electronico = correo_electronico
+        self.competencia = competencia
+        self.historial_nombre = historial_nombre
+
+    def __repr__(self):
+        return '<DTOParticipante(%r, %r)' %(self.nombre, self.correo_electronico)
 
 
 class DTOCompetencia:
