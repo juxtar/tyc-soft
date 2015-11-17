@@ -1,6 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from almacenamiento import *
+import time
 
 
 class Singleton:
@@ -18,6 +19,13 @@ class Singleton:
 
 class NombreExistente(Exception):
     """Excepcion para manejar errores de nombre ya existente"""
+    def __init__(self, mensaje):
+        self.mensaje = mensaje
+    def __str__(self):
+        return repr(self.mensaje)
+
+class FaltaDeDatos(Exception):
+    """Excepcion para manejar errores de falta de datos"""
     def __init__(self, mensaje):
         self.mensaje = mensaje
     def __str__(self):
@@ -102,19 +110,23 @@ class GestorParticipante(Singleton):
 
     def nuevo_participante(self, dto):
         """Realiza las correspondientes validaciones con del participante y luego lo agrega al sistema"""
-
-        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia = dto.id_competencia)
         if dto.nombre is None:
-                """Debe escribir un nombre para este participante"""
+               raise FaltaDeDatos('Debe escribir un nombre para este participante')
         if dto.correo_electronico is None:
-                """Debe escribir un correo electronico para este participante"""
-        for i in lista_participantes:
-            if i.nombre == dto.nombre:
-                """Este participante ya existe en esta competencia"""
-            if i.correo_electronico == dto.correo_electronico:
-                """Este correo electronico ya existe en esta competencia"""
-        part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico, imagen = dto.imagen)
+                raise FaltaDeDatos('Debe escribir un correo electronico para este participante')
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(nombre = dto.competencia)
+        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia = competencia.id)
+        for participante in lista_participantes:
+            if participante.nombre == dto.nombre:
+                raise NombreExistente('Este participante ya existe en esta competencia')
+            if participante.correo_electronico == dto.correo_electronico:
+                raise NombreExistente('Este correo electronico ya existe en esta competencia')
+        part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
         GestorBaseDeDatos.get_instance().agregar_participante(part)
+        """historial = HistorialNombres(nombre = part.nombre, fecha = time.strftime("%d/%m/%y"), id_participante = part.id)
+        GestorBaseDeDatos.get_instance().agregar_historial(historial= historial)
+        competencia.estado == 'Creada'
+        GestorBaseDeDatos.get_instance().modificar_competencia()"""
         
 
     def modificar_participante(self):
@@ -123,16 +135,16 @@ class GestorParticipante(Singleton):
     def eliminar_participante(self):
         pass
 
-    def listar_participantes(self, id_competencia = None):
+    def listar_participantes(self, id_competencia= None):
         lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia= id_competencia)
         lista = []
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
-        for participante in listar_participantes:
+        for participante in lista_participantes:
             historial = GestorBaseDeDatos.get_instance().listar_historial(participante.id)
             nombresEnHistorial = []
             for nombre in historial:
                 nombresEnHistorial.add(historial.nombre)
-            dto_participante = DTOParticipante(participante.id, participante.nombre, participante.correo_electronico, competencia.nombre, nombresEnHistorial)
+            dto_participante = DTOParticipante(participante.id, participante.nombre, participante.correo_electronico, competencia.nombre, nombresEnHistorial, participante.imagen)
             lista.add(dto_participante)
         return lista
 
@@ -176,6 +188,10 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(participante)
         self.session.commit()
 
+    def agregar_historial(self, historial):
+        self.session.add(historial)
+        self.session.commit()
+
     def modificar_competencia(self):
         self.session.commit()
 
@@ -199,6 +215,7 @@ class GestorBaseDeDatos(Singleton):
             return query.one()
         if nombre is not None:
             query = query.filter(Competencia.nombre == nombre)
+            return query.one()
         if id_usuario is not None:
             query = query.filter(Competencia.id_usuario == id_usuario)
         if deporte is not None:
@@ -248,12 +265,18 @@ class GestorLugar(Singleton):
 
 class DTOParticipante:
     """Almacena informacion para la transfrencia de datos de una competencia"""
-    def __init__(self, id_participante, nombre, correo_electronico, id_competencia, historial_nombre):
+    def __init__(self, id_participante, nombre, correo_electronico, competencia, historial_nombre, imagen):
         self.id = id_participante
-        self.nombre = nombre
-        self.correo_electronico = correo_electronico
-        self.competencia = competencia
-        self.historial_nombre = historial_nombre
+        self.nombre = nombre 
+        """Nombre del participante"""
+        self.correo_electronico = correo_electronico 
+        """Correo electronico del participante"""
+        self.competencia = competencia 
+        """Nombre de la competencia"""
+        self.historial_nombre = historial_nombre 
+        """Lista de nombres (strings)"""
+        self.imagen = imagen 
+        """Imagen"""
 
     def __repr__(self):
         return '<DTOParticipante(%r, %r)' %(self.nombre, self.correo_electronico)
