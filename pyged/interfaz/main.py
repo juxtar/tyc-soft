@@ -4,6 +4,8 @@ import gtk
 import gtk.glade
 from os import path
 
+main = gtk.main
+
 def agregar_cuadro_error(main_window):
     """Dada una ventana pasada como argumento, le agrega un widget para poder
     mostrar mensajes de errores en la parte superior"""

@@ -2,14 +2,13 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 import gtk.glade
-import sys
 from os import path
-sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from logica import GestorCompetencia, GestorLugar, NombreExistente, DTOCompetencia, DTOLugar
+from pyged.gestores.dtos import DTOCompetencia, DTOLugar
+from pyged.gestores.excepciones import NombreExistente
+from pyged.gestores.gestorcompetencia import GestorCompetencia
+from pyged.gestores.gestorlugar import GestorLugar
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
-
-main = gtk.main
 
 def obtener_descendientes(widget, tipo):
     """Busca descendientes del widget del tipo especificado"""
