@@ -1,12 +1,12 @@
 class DTOParticipante:
     """Almacena informacion para la transfrencia de datos de una competencia"""
-    def __init__(self, id_participante, nombre, correo_electronico, competencia, historial_nombre, imagen):
+    def __init__(self, id_participante, nombre, correo_electronico, id_competencia, historial_nombre, imagen):
         self.id = id_participante
         self.nombre = nombre
         """Nombre del participante"""
         self.correo_electronico = correo_electronico
         """Correo electronico del participante"""
-        self.competencia = competencia
+        self.id_competencia = id_competencia
         """Nombre de la competencia"""
         self.historial_nombre = historial_nombre
         """Lista de nombres (strings)"""
