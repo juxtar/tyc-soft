@@ -7,7 +7,7 @@ from pyged.almacenamiento import *
 class GestorBaseDeDatos(Singleton):
     """Realiza tareas correspondientes a las interacciones con la Base de Datos"""
     def __init__(self):
-        engine = create_engine('sqlite:///pyged.db', echo=True, convert_unicode=True)
+        engine = create_engine('sqlite:///pyged2.db', echo=True, convert_unicode=True)
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -43,6 +43,11 @@ class GestorBaseDeDatos(Singleton):
     def agregar_historial(self, historial):
         self.session.add(historial)
         self.session.commit()
+
+    def ver_historial(self, id_participante):
+        query = self.session.query(HistorialNombres)
+        query = query.filter(HistorialNombres.id_participante == id_participante)
+        return query.all()
 
     def modificar_competencia(self):
         self.session.commit()
