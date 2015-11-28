@@ -3,6 +3,7 @@ from excepciones import FaltaDeDatos, NombreExistente
 from gestorbasededatos import GestorBaseDeDatos
 from dtos import DTOParticipante
 from pyged.almacenamiento import *
+from datetime import *
 
 
 class GestorParticipante(Singleton):
@@ -25,11 +26,14 @@ class GestorParticipante(Singleton):
                 raise NombreExistente('Este correo electronico ya existe en esta competencia')
         part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
         GestorBaseDeDatos.get_instance().agregar_participante(part)
-        historial = HistorialNombres(nombre = part.nombre, fecha = datetime.datetime.now().date(), id_participante = part.id)
+        historial = HistorialNombres(nombre = part.nombre, fecha = datetime.now().date(), id_participante = part.id)
         GestorBaseDeDatos.get_instance().agregar_historial(historial= historial)
-        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia=competencia.id)
+        if competencia.participante is None:
+            lista_participantes = []
+            lista_participantes.append(part)
+        else:
+            competencia.participante.append(part)
         competencia.estado = 'Creada'
-        competencia.particpante= lista_participantes.append(part)
         GestorBaseDeDatos.get_instance().modificar_competencia()
 
 
