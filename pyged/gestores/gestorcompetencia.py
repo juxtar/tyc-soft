@@ -55,9 +55,9 @@ class GestorCompetencia(Singleton):
                     competencia.estado, competencia.reglamento, competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
                     competencia.puntos_por_presentarse, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         else:
+            usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)          
             lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre, id_usuario=id_usuario, deporte=deporte, modalidad=modalidad, estado=estado)
             for competencia in lista_competencias:
-                usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
                 if competencia.tipo == 'eliminatoriasimple' or competencia.tipo == 'eliminatoriadoble':
                     lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion, competencia.estado, competencia.reglamento,
                         competencia.id_usuario, usuario.nombre, competencia.tipo, competencia.cantidad_de_sets, None, None, None, competencia.deporte.nombre, None, competencia.tantos_presentismo))
@@ -67,11 +67,34 @@ class GestorCompetencia(Singleton):
                         competencia.puntos_por_presentarse, competencia.puntos_por_ganar, competencia.puntos_por_empate, competencia.deporte.nombre, None, competencia.tantos_presentismo))
         return lista_dtos
 
-    def generar_fixture(self):
+    def generar_fixture(self, id_competencia):
+        lista_participantes = GestorParticipantes.get_instance().listar_participantes(id_competencia=id_competencia)
+        competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
+        lista_lugares = competencia.sedes
+        
+
+
+
         pass
     def modificar_competencia(self):
         pass
-    def generar_tabla_posiciones(self):
+    def generar_tabla_posiciones(self, id_competencia):
+        """lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia=id_competencia)
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
+        presentarse = competencia.puntos_por_presentarse
+        ganar = competencia.puntos_por_ganar
+        empate = competencia.puntos_por_empate
+        for participante in lista_participante:
+            lista_partidas = GestorBaseDeDatos.get_instance().listar_partidas(id_participante = participante.id)
+            puntos = 
+            golesafavor = 0
+            golesencontra = 0
+            for partida in lista_partidas:
+                if partida.id_competidor_local == participante.id:
+                    if partida.resultado == 'ResultadoPorPuntuacion':
+                        if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
+                            puntos = puntos + ganar
+                        elif partida.resultado.puntos_de_local  partida.resultado.puntos_de_visitante:"""        
         pass
     def eliminar_fiture(self):
         pass
