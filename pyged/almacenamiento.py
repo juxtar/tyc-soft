@@ -102,6 +102,9 @@ class Sede(Base):
 
     lugar = relationship("Lugar")
 
+    def __repr__(self):
+        return '<Sede(%r)>' % (self.disponibilidad)
+
 class Deporte(Base):
     """Almacena informacion de un deporte"""
 
@@ -224,36 +227,23 @@ class Partida(Base):
     id = Column(Integer, primary_key=True)
     estado = Column(String)
     instancia = Column(String)
+    local_presente = Column(Boolean)
+    visitante_presente = Column(Boolean)
+    id_participante_local = Column(Integer, ForeignKey('participante.id'))
+    id_participante_visitante = Column(Integer, ForeignKey('participante.id'))
     id_proximo_ganador = Column(Integer, ForeignKey('partida.id'))
     id_proximo_perdedor = Column(Integer, ForeignKey('partida.id'))
     id_resultado = Column(Integer, ForeignKey('resultado.id'))
-    id_competidor_local = Column(Integer, ForeignKey('compite_en.id'))
-    id_competidor_visitante = Column(Integer, ForeignKey('compite_en.id'))
 
     proximo_ganador = relationship("Partida", uselist=False, foreign_keys="Partida.id_proximo_ganador")
     proximo_perdedor = relationship("Partida", uselist=False, foreign_keys="Partida.id_proximo_perdedor")
-    competidor_local = relationship("Competidor", uselist=False, foreign_keys="Partida.id_competidor_local")
-    competidor_visitante = relationship("Competidor", uselist=False, foreign_keys="Partida.id_competidor_visitante")
+    participante_local = relationship("Participante", uselist=False, foreign_keys="Partida.id_participante_local")
+    participante_visitante = relationship("Participante", uselist=False, foreign_keys="Partida.id_participante_visitante")
     resultado = relationship("Resultado", uselist=False, foreign_keys="Partida.id_resultado")
     historial = relationship("Resultado", foreign_keys="Resultado.id_partida")
 
     def __repr__(self):
         return '<Partida(%r, %r)>' % (self.instancia, self.estado)
-
-class Competidor(Base):
-    """Representa el rol de un participante dentro de una partida"""
-
-    __tablename__ = 'compite_en' # Agregar a Diagrama de Tablas
-
-    id = Column(Integer, primary_key=True)
-    presente = Column(Boolean, nullable=False)
-    id_partida = Column(Integer, ForeignKey('partida.id'))
-    id_participante = Column(Integer, ForeignKey('participante.id'))
-
-    participante = relationship("Participante")
-
-    def __repr__(self):
-        return '<Competidor(%r, %r)>' % (self.presente, self.participante)
 
 class Resultado(Base):
     """Almacena informacion del resultado de una partida"""
