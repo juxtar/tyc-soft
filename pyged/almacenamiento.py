@@ -136,7 +136,7 @@ class Competencia(Base):
 
     deporte = relationship("Deporte")
     sedes = relationship("Sede")
-    participante = relationship("Participante")
+    participantes = relationship("Participante")
     partidas = relationship("Partida")
 
     __mapper_args__ = {
