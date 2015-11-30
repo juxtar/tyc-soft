@@ -223,6 +223,7 @@ class Partida(Base):
     id = Column(Integer, primary_key=True)
     estado = Column(String)
     instancia = Column(String)
+    id_competencia = Column(Ineger, ForeignKey('Competencia.id'))
     id_proximo_ganador = Column(Integer, ForeignKey('partida.id'))
     id_proximo_perdedor = Column(Integer, ForeignKey('partida.id'))
     id_resultado = Column(Integer, ForeignKey('resultado.id'))

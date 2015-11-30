@@ -4,6 +4,8 @@ from gestorusuario import GestorUsuario
 from gestorlugar import GestorLugar
 from excepciones import NombreExistente
 from dtos import DTOCompetencia
+from gestorpartida import GestorPartida
+from gestorparticipante import GestorParticipante
 from pyged.almacenamiento import *
 
 class GestorCompetencia(Singleton):
@@ -68,9 +70,25 @@ class GestorCompetencia(Singleton):
         return lista_dtos
 
     def generar_fixture(self, id_competencia):
-        lista_participantes = GestorParticipantes.get_instance().listar_participantes(id_competencia=id_competencia)
+        lista_participantes = GestorParticipante.get_instance().listar_participantes(id_competencia=id_competencia)
         competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
         lista_lugares = competencia.sedes
+        lista_partidas = GestorPartida.get_instance().listar_partidas(id_competencia = id_competencia)
+        cantidad_de_partidas = len(lista_partidas)
+        cantidad_de_participante = len(lista_participantes)
+        if cantidad_de_partidas > 0:
+            GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
+        if (cantidad_de_participantes % 2) == 1:
+            dummy = DTOParticipante(None, 'dummy', 'dummy', id_competencia, None, None)
+            GestorParticipante.get_instance().nuevo_participante(dummy)
+            lista_participantes = GestorParticipante.get_instance().listar_participantes(id_competencia=id_competencia)
+            cantidad_de_participante = len(lista_participantes)
+        for fecha range(cantidad_de_participante - 1):
+            for partida range(cantidad_de_participante/2):
+                GestorPartida.get_instance().nueva_partida()
+
+
+
         
 
 
