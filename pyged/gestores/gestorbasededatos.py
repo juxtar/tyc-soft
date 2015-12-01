@@ -16,14 +16,10 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(usuario)
         self.session.commit()
 
-    def listar_partidas(self, id_participante= None, id_competencia = None):
+    def listar_partidas(self, id_participante):
         query = self.session.query(Partida)
-        if id_participante is not None:
-            query = query.filter(Partida.id_competidor_local == id_participante or Partida.id_competidor_visitante == id_participante)
-            return query.all()
-        if id_competencia is not None:
-            query = query.filter(Partida.id_competencia = id_competencia)
-            return query.all()
+        query = query.filter(Partida.id_competidor_local == id_participante or Partida.id_competidor_visitante == id_participante)
+        return query.all()
 
     def agregar_competencia(self, competencia):
         self.session.add(competencia)
