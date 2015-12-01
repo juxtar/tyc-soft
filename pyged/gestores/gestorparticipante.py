@@ -18,21 +18,16 @@ class GestorParticipante(Singleton):
         if dto.correo_electronico is None:
                 raise FaltaDeDatos('Debe escribir un correo electronico para este participante')
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto.id_competencia)
-        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia = competencia.id)
+        lista_participantes = competencia.participante
         for participante in lista_participantes:
             if participante.nombre == dto.nombre:
                 raise NombreExistente('Este participante ya existe en esta competencia')
             if participante.correo_electronico == dto.correo_electronico:
                 raise NombreExistente('Este correo electronico ya existe en esta competencia')
         part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
-        GestorBaseDeDatos.get_instance().agregar_participante(part)
         historial = HistorialNombres(nombre = part.nombre, fecha = datetime.now().date(), id_participante = part.id)
-        GestorBaseDeDatos.get_instance().agregar_historial(historial= historial)
-        if competencia.participante is None:
-            lista_participantes = []
-            lista_participantes.append(part)
-        else:
-            competencia.participante.append(part)
+        part.historial_nombres = [historial]
+        competencia.participante.append(part)
         competencia.estado = 'Creada'
         GestorBaseDeDatos.get_instance().modificar_competencia()
 
