@@ -234,6 +234,7 @@ class Partida(Base):
     id_proximo_ganador = Column(Integer, ForeignKey('partida.id'))
     id_proximo_perdedor = Column(Integer, ForeignKey('partida.id'))
     id_resultado = Column(Integer, ForeignKey('resultado.id'))
+    id_competencia = Column(Integer, ForeignKey('competencia.id'))
 
     proximo_ganador = relationship("Partida", uselist=False, foreign_keys="Partida.id_proximo_ganador")
     proximo_perdedor = relationship("Partida", uselist=False, foreign_keys="Partida.id_proximo_perdedor")
