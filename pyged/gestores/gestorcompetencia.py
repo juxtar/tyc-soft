@@ -40,7 +40,8 @@ class GestorCompetencia(Singleton):
                                              id_usuario=dto.id_usuario, sedes=lista_sedes,
                                              puntos_por_presentarse=dto.puntos_por_presentarse,
                                              puntos_por_ganar=dto.puntos_por_ganar,
-                                             puntos_por_empate=dto.puntos_por_empate, deporte = deporte)
+                                             puntos_por_empate=dto.puntos_por_empate, deporte = deporte,
+                                             permitir_empate=dto.permitir_empate)
         GestorBaseDeDatos.get_instance().agregar_competencia(competencia_new)
         return 1
 
@@ -58,35 +59,36 @@ class GestorCompetencia(Singleton):
                                                   competencia.estado, competencia.reglamento, competencia.id_usuario,
                                                   usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
                                                   None, None, None, competencia.deporte.nombre, None,
-                                                  competencia.tantos_presentismo))
+                                                  competencia.tantos_presentismo, None))
             else:
                 lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
                                                  competencia.estado, competencia.reglamento, competencia.id_usuario,
                                                  usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
                                                  competencia.puntos_por_presentarse, competencia.puntos_por_ganar,
                                                  competencia.puntos_por_empate, competencia.deporte.nombre, None,
-                                                 competencia.tantos_presentismo))
+                                                 competencia.tantos_presentismo, competencia.permitir_empate))
         else:
-            usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
             lista_competencias = GestorBaseDeDatos.get_instance().listar_competencias(nombre=nombre,
                                                                                       id_usuario=id_usuario,
                                                                                       deporte=deporte,
                                                                                       modalidad=modalidad,
                                                                                       estado=estado)
             for competencia in lista_competencias:
+                usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
                 if competencia.tipo == 'eliminatoriasimple' or competencia.tipo == 'eliminatoriadoble':
                     lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
                                                      competencia.estado, competencia.reglamento,
                                                      competencia.id_usuario, usuario.nombre, competencia.tipo,
                                                      competencia.cantidad_de_sets, None, None, None,
-                                                     competencia.deporte.nombre, None, competencia.tantos_presentismo))
+                                                     competencia.deporte.nombre, None, competencia.tantos_presentismo,
+                                                     None))
                 else:
                     lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
                                                      competencia.estado, competencia.reglamento, competencia.id_usuario,
                                                      usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
                                                      competencia.puntos_por_presentarse, competencia.puntos_por_ganar,
                                                      competencia.puntos_por_empate, competencia.deporte.nombre, None,
-                                                     competencia.tantos_presentismo))
+                                                     competencia.tantos_presentismo, competencia.permitir_empate))
         return lista_dtos
 
     def generar_fixture(self, id_competencia):

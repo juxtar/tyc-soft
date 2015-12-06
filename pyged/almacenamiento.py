@@ -155,6 +155,7 @@ class CompetenciaLiga(Competencia):
     puntos_por_presentarse = Column(Integer)
     puntos_por_ganar = Column(Integer)
     puntos_por_empate = Column(Integer)
+    permitir_empate = Column(Boolean)
 
     __mapper_args__ = {
         'polymorphic_identity':'liga'
@@ -220,7 +221,7 @@ class Partida(Base):
 
     __tablename__ = 'partida'
     __table_args__ = (
-            CheckConstraint('id_competidor_local != id_competidor_visitante', name='check_competidores'),
+            CheckConstraint('id_participante_local != id_participante_visitante', name='check_participantes'),
             CheckConstraint('id_proximo_ganador != id_proximo_perdedor', name='check_proximos')
         )
 

@@ -223,6 +223,7 @@ class NuevaCompetencia(Interfaz):
 
         cantidad_sets = self.glade.get_object('spinbutton1').get_value()
         tantos_presentismo = self.glade.get_object('spinbutton2').get_value()
+        permitir_empate = self.glade.get_object('empate').get_active()
         puntos_empate = self.glade.get_object('spinEmpate').get_value()
         puntos_victoria = self.glade.get_object('spinbutton4').get_value()
         puntos_presentarse = self.glade.get_object('spinbutton5').get_value()
@@ -237,7 +238,7 @@ class NuevaCompetencia(Interfaz):
 
         dto = DTOCompetencia(None, nombre, puntuacion, 'Creada', reglamento, self.id_usuario, None, modalidad,
                             cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate, deporte,
-                            lugares, tantos_presentismo)
+                            lugares, tantos_presentismo, permitir_empate)
 
         try:
             exito = GestorCompetencia.get_instance().nueva_competencia(dto)
