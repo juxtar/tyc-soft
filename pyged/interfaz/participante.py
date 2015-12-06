@@ -3,7 +3,7 @@ pygtk.require("2.0")
 import gtk
 import gtk.glade
 from main import agregar_cuadro_error
-from pyged.gestores.gestorparticipante import GestorParticipante
+from pyged.gestores import GestorParticipante
 
 class NuevoParticipante:
     """Interfaz para crear un nuevo participante"""
