@@ -5,8 +5,7 @@ import gtk.glade
 from os import path
 from pyged.gestores.dtos import DTOCompetencia, DTOLugar
 from pyged.gestores.excepciones import NombreExistente
-from pyged.gestores.gestorcompetencia import GestorCompetencia
-from pyged.gestores.gestorlugar import GestorLugar
+from pyged.gestores import GestorCompetencia, GestorLugar
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 
@@ -27,6 +26,45 @@ def obtener_descendientes(widget, tipo):
             descendientes.append(hijo)
     finally:
         return descendientes
+
+class VerCompetencia(Interfaz):
+    """ Muestra informacion de la competencia y acceso a otras interfaces para el manejo de la misma
+    """
+    def __init__(self, id_competencia):
+        self.id_competencia = id_competencia
+        self.glade = gtk.Builder()
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
+        self.glade.get_object('button10').connect('clicked', self.ver_participantes)
+        self.glade.get_object('button7').connect('clicked', self.mostrar_tabla)
+        self.glade.get_object('button8').connect('clicked', self.generar_fixture)
+        self.glade.get_object('button9').connect('clicked', self.volver)
+
+        datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)[0]
+        self.glade.get_object('NombreCompetencia').set_text(datos_competencia.nombre)
+        self.glade.get_object('modalidad').set_text(datos_competencia.tipo)
+        self.glade.get_object('deporte').set_text(datos_competencia.deporte)
+        self.glade.get_object('estado').set_text(datos_competencia.estado)
+
+        self.main_window = self.glade.get_object('ver_competencia')
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        boton_cerrar.connect('clicked', self.cerrar_error)
+        self.main_window.show_all()
+
+    def destroy(self, widget):
+        pass
+
+    def volver(self, widget):
+        pass
+
+    def ver_participantes(self, widget):
+        pass
+
+    def mostrar_tabla(self, widget):
+        pass
+
+    def generar_fixture(self, widget):
+        pass
 
 class ListarMisCompetencias(Interfaz):
     """Interfaz para buscar y listar las competencias de un usuario"""
@@ -76,7 +114,8 @@ class ListarMisCompetencias(Interfaz):
         modelo = self.glade.get_object('treeview1').get_model()
         modelo.clear()
         for competencia in lista_competencias:
-            modelo.append([competencia.nombre, competencia.deporte, competencia.tipo, competencia.estado, competencia.nombre_usuario])
+            modelo.append([competencia.nombre, competencia.deporte, competencia.tipo, competencia.estado,
+                           competencia.nombre_usuario])
 
     def volver(self, widget):
         self.destroy(None) # Temporal por esta entrega
