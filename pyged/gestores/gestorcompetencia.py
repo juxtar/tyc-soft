@@ -91,7 +91,6 @@ class GestorCompetencia(Singleton):
 
     def generar_fixture(self, id_competencia):
         competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
-        lista_lugares = competencia.sedes
         lista_participantes = competencia.participante
         lista_partidas = competencia.partidas
         cantidad_de_partidas = len(lista_partidas)
@@ -123,7 +122,10 @@ class GestorCompetencia(Singleton):
         empate = competencia.puntos_por_empate
         lista_dtos = []
         for participante in lista_participantes:
-            lista_partidas = GestorBaseDeDatos.get_instance().listar_partidas(id_participante = participante.id)
+            lista_partidas = competencia.partidas[:]
+            for partida in lista_partidas:
+                if not(partida.participante_local == participante.id or partida.participante_visitante == participante.id):
+                    lista_partidas.remove(partida)
             puntos = 0
             goles_a_favor = 0
             goles_en_contra = 0
