@@ -55,7 +55,8 @@ class DTOLugar:
 
 class DTOTabla:
     """Almacena informacion para la transferencia de datos de resultados"""
-    def __init__(self, id_participante, nombre, puntos, partidos_ganados, partidos_empatados, partidos_perdidos, goles_a_favor, goles_en_contra):
+    def __init__(self, id_participante, nombre, puntos, partidos_ganados, partidos_empatados, partidos_perdidos,
+                 goles_a_favor, goles_en_contra):
         self.id = id_participante
         self.nombre = nombre
         self.puntos = puntos
@@ -66,4 +67,6 @@ class DTOTabla:
         self.goles_en_contra = goles_en_contra
 
     def __repr__(self):
-        return '<DTOTabla(%r,%r,%r,%r,%r, %r, %r)>' %(self.nombre, self.puntos,self.partidos_ganados,self.partidos_empatados, self.partidos_perdidos, self.goles_a_favor, self.goles_en_contra)
+        return '<DTOTabla(%r,%r,%r,%r,%r, %r, %r)>' %(self.nombre, self.puntos, self.partidos_ganados,
+                                                      self.partidos_empatados, self.partidos_perdidos,
+                                                      self.goles_a_favor, self.goles_en_contra)

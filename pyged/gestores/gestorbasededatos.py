@@ -18,7 +18,8 @@ class GestorBaseDeDatos(Singleton):
 
     def listar_partidas(self, id_participante):
         query = self.session.query(Partida)
-        query = query.filter(Partida.id_competidor_local == id_participante or Partida.id_competidor_visitante == id_participante)
+        query = query.filter(Partida.id_competidor_local == id_participante or
+                             Partida.id_competidor_visitante == id_participante)
         return query.all()
 
     def agregar_competencia(self, competencia):
@@ -70,7 +71,8 @@ class GestorBaseDeDatos(Singleton):
     def listar_participantes(self, id_competencia):
         return self.session.query(Participante).filter(Participante.id_competencia == id_competencia).all()
 
-    def listar_competencias(self, id_competencia= None, nombre = None, id_usuario = None, deporte = None, modalidad = None, estado = None):
+    def listar_competencias(self, id_competencia= None, nombre = None, id_usuario = None, deporte = None,
+                            modalidad = None, estado = None):
         query = self.session.query(Competencia)
         if id_competencia is not None:
             query = query.filter(Competencia.id == id_competencia)
