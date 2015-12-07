@@ -75,6 +75,7 @@
     <property name="width_request">600</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Modificar Lugar</property>
+    <property name="window_position">center</property>
     <child>
       <object class="GtkVBox" id="vbox4">
         <property name="visible">True</property>
@@ -437,6 +438,7 @@
     <property name="width_request">600</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Agregar Lugar de Realizacion</property>
+    <property name="window_position">center</property>
     <child>
       <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
@@ -801,7 +803,7 @@
   <object class="GtkWindow" id="ver_lugares">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Listar lugares de realización</property>
-    <property name="window_position">mouse</property>
+    <property name="window_position">center</property>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="width_request">600</property>
