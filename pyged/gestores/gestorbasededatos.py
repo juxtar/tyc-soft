@@ -16,6 +16,34 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(usuario)
         self.session.commit()
 
+    def agregar_competencia(self, competencia):
+        self.session.add(competencia)
+        self.session.commit()
+
+    def agregar_lugar(self, lugar):
+        self.session.add(lugar)
+        self.session.commit()
+
+    def agregar_deporte(self, deporte):
+        self.session.add(deporte)
+        self.session.commit()
+
+    def agregar_participante(self, participante):
+        self.session.add(participante)
+        self.session.commit()
+
+    def agregar_historial(self, historial):
+        self.session.add(historial)
+        self.session.commit()
+
+    def listar_deportes(self, nombre= None):
+        query = self.session.query(Deporte)
+        if nombre is not None:
+            query = query.filter(Deporte.nombre == nombre)
+            return query.one()
+        else:
+            return query.all()
+
     def listar_partidas(self, id_participante=None, id_partida=None):
         query = self.session.query(Partida)
         if id_partida is not None:
@@ -25,42 +53,6 @@ class GestorBaseDeDatos(Singleton):
             query = query.filter(Partida.id_competidor_local == id_participante or
                              Partida.id_competidor_visitante == id_participante)
         return query.all()
-
-    def agregar_competencia(self, competencia):
-        self.session.add(competencia)
-        self.session.commit()
-        
-    def agregar_lugar(self, lugar):
-        self.session.add(lugar)
-        self.session.commit()
-
-    def agregar_deporte(self, deporte):
-        self.session.add(deporte)
-        self.session.commit()
-    
-    def listar_deportes(self, nombre= None):
-        query = self.session.query(Deporte)
-        if nombre is not None:
-            query = query.filter(Deporte.nombre == nombre)
-            return query.one()
-        else:
-            return query.all()
-   
-    def agregar_participante(self, participante):
-        self.session.add(participante)
-        self.session.commit()
-
-    def agregar_historial(self, historial):
-        self.session.add(historial)
-        self.session.commit()
-
-    def ver_historial(self, id_participante):
-        query = self.session.query(HistorialNombres)
-        query = query.filter(HistorialNombres.id_participante == id_participante)
-        return query.all()
-
-    def modificar_competencia(self):
-        self.session.commit()
 
     def listar_usuario(self, id_usuario):
         query = self.session.query(Usuario)
@@ -104,3 +96,14 @@ class GestorBaseDeDatos(Singleton):
         elif id_usuario is not None:
             query = query.filter(Lugar.id_usuario == id_usuario)
             return query.all()
+
+    def ver_historial(self, id_participante):
+        query = self.session.query(HistorialNombres)
+        query = query.filter(HistorialNombres.id_participante == id_participante)
+        return query.all()
+
+    def modificar_competencia(self):
+        self.session.commit()
+
+    def modificar_usuario(self):
+        self.session.commit()
