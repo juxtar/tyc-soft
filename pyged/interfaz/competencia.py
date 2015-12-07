@@ -5,7 +5,8 @@ import gtk.glade
 from os import path
 from pyged.gestores.dtos import DTOCompetencia, DTOLugar
 from pyged.gestores.excepciones import NombreExistente
-from pyged.gestores import GestorCompetencia, GestorLugar
+from pyged.gestores.gestorcompetencia import GestorCompetencia
+from pyged.gestores.gestorlugar import GestorLugar
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 

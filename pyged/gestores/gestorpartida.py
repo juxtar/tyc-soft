@@ -1,7 +1,5 @@
 from main import Singleton
 from gestorbasededatos import GestorBaseDeDatos
-from gestorcompetencia import GestorCompetencia
-from gestorparticipante import GestorParticipante
 from dtos import DTOPartida
 
 class GestorPartida(Singleton):
@@ -10,6 +8,8 @@ class GestorPartida(Singleton):
         pass
 
     def listar_partidas(self, id_participante=None, id_partida=None):
+        from gestorcompetencia import GestorCompetencia
+
         lista_partidas = GestorBaseDeDatos.get_instance().listar_partidas(id_participante = id_participante,
                                                                           id_partida = id_partida)
         if id_partida is not None:
