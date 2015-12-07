@@ -75,7 +75,7 @@ class DTOTabla:
 class DTOPartida:
     """Almacena informacion para la transfrencia de datos de partidas"""
     def __init__(self, id, estado, instancia, local_presente, visitante_presente, id_resultado, nombre_local,
-                 nombre_visitante, permitir_empate):
+                 nombre_visitante, permitir_empate, tipo_puntuacion, cantidad_de_sets):
         self.id = id
         self.estado = estado
         self.instancia = instancia
@@ -85,3 +85,5 @@ class DTOPartida:
         self.nombre_local = nombre_local
         self.nombre_visitante = nombre_visitante
         self.permitir_empate = permitir_empate
+        self.tipo_puntuacion = tipo_puntuacion
+        self.cantidad_de_sets = cantidad_de_sets
