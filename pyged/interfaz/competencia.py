@@ -125,7 +125,8 @@ class ListarMisCompetencias(Interfaz):
         pass
 
     def nueva_competencia(self, widget):
-        n = NuevaCompetencia(self.id_usuario)
+        self.main_window.hide()
+        n = NuevaCompetencia(self.id_usuario, self.main_window)
 
     def destroy(self, widget):
         gtk.main_quit()
@@ -133,8 +134,9 @@ class ListarMisCompetencias(Interfaz):
 
 class NuevaCompetencia(Interfaz):
     """Interfaz para crear una nueva competencia"""
-    def __init__(self, id_usuario):
+    def __init__(self, id_usuario, ventana_padre):
         self.id_usuario = id_usuario
+        self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
         self.glade.get_object('button4').connect('clicked', self.volver)
@@ -160,6 +162,7 @@ class NuevaCompetencia(Interfaz):
 
     def volver(self, widget):
         self.main_window.hide()
+        self.ventana_padre.show()
 
     def dinamizar(self, widget):
         nombre = gtk.Buildable.get_name(widget)
@@ -244,7 +247,7 @@ class NuevaCompetencia(Interfaz):
         try:
             exito = GestorCompetencia.get_instance().nueva_competencia(dto)
             if exito is 1:
-                Exito(self.main_window)
+                Exito(self)
         except NombreExistente:
             self.mostrar_error('Ya existe una competencia con ese nombre.')
 
