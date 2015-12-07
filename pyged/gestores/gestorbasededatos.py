@@ -16,9 +16,13 @@ class GestorBaseDeDatos(Singleton):
         self.session.add(usuario)
         self.session.commit()
 
-    def listar_partidas(self, id_participante):
+    def listar_partidas(self, id_participante=None, id_partida=None):
         query = self.session.query(Partida)
-        query = query.filter(Partida.id_competidor_local == id_participante or
+        if id_partida is not None:
+            query = query.filter(Partida.id == id_partida)
+            return query.one()
+        if id_participante is not None:
+            query = query.filter(Partida.id_competidor_local == id_participante or
                              Partida.id_competidor_visitante == id_participante)
         return query.all()
 
@@ -68,8 +72,11 @@ class GestorBaseDeDatos(Singleton):
         query = query.filter(HistorialNombres.id_participante == id_participante)
         return query.all()
 
-    def listar_participantes(self, id_competencia):
-        return self.session.query(Participante).filter(Participante.id_competencia == id_competencia).all()
+    def listar_participantes(self, id_competencia=None, id_participante=None):
+        if id_participante is not None:
+            return self.session.query(Participante).filter(Participante.id == id_participante).one()
+        else:
+            return self.session.query(Participante).filter(Participante.id_competencia == id_competencia).all()
 
     def listar_competencias(self, id_competencia= None, nombre = None, id_usuario = None, deporte = None,
                             modalidad = None, estado = None):

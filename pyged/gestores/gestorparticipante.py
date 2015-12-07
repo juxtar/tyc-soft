@@ -38,8 +38,12 @@ class GestorParticipante(Singleton):
     def eliminar_participante(self):
         pass
 
-    def listar_participantes(self, id_competencia = None):
-        lista_participantes = GestorBaseDeDatos.get_instance().listar_participantes(id_competencia=id_competencia)
+    def listar_participantes(self, id_competencia = None, id_participante=None):
+        lista_participantes = []
+        if id_participante is not None:
+            lista_participantes.append(GestorBaseDeDatos.get_instance().listar_participantes(id_participante=id_participante))
+        else:
+            lista_participantes += GestorBaseDeDatos.get_instance().listar_participantes(id_competencia=id_competencia)
         lista = []
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
         for participante in lista_participantes:
