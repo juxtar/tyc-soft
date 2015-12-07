@@ -3,7 +3,7 @@ pygtk.require("2.0")
 import gtk
 import gtk.glade
 from os import path
-from pyged.gestores import GestorPartida
+from pyged.gestores.gestorpartida import GestorPartida
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 
@@ -16,11 +16,11 @@ class GestionarFinal(Interfaz):
         self.glade.get_object('button6').connect('clicked', self.volver)
         self.glade.get_object('button7').connect('clicked', self.aceptar)
 
-        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)
+        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('label38').set_text(datos_partida.nombre_local)
         self.glade.get_object('label42').set_text(datos_partida.nombre_visitante)
         self.glade.get_object('label40').set_sensitive(datos_partida.permitir_empate)
-        self.glade.get_object('radiobutton2').set_sensitive(not (datos_partida.permitir_empate))
+        self.glade.get_object('radiobutton2').set_sensitive(datos_partida.permitir_empate)
 
         self.main_window = self.glade.get_object('gestionar_final')
         self.main_window.connect('destroy', self.destroy)
@@ -46,7 +46,7 @@ class GestionarPuntos(Interfaz):
         self.glade.get_object('button10').connect('clicked', self.volver)
         self.glade.get_object('button11').connect('clicked', self.aceptar)
 
-        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)
+        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('checkbutton5').set_label(datos_partida.nombre_local)
         self.glade.get_object('checkbutton6').set_label(datos_partida.nombre_visitante)
 
@@ -74,7 +74,7 @@ class GestionarSets(Interfaz):
         self.glade.get_object('button8').connect('clicked', self.volver)
         self.glade.get_object('button9').connect('clicked', self.aceptar)
 
-        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)
+        datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('checkbutton4').set_label(datos_partida.nombre_local)
         self.glade.get_object('checkbutton3').set_label(datos_partida.nombre_visitante)
 
@@ -87,11 +87,9 @@ class GestionarSets(Interfaz):
                         for index in range(1, 10)]
         for i, widgets in enumerate(self.lista_widgets):
             for widget in widgets.values():
-                widget.set_sensitive(not (i<datos_partida.cantidad_de_sets))
+                widget.set_sensitive(i<datos_partida.cantidad_de_sets)
             widgets['local'].connect('changed', self.dinamizar)
             widgets['visitante'].connect('changed', self.dinamizar)
-
-
 
         self.main_window = self.glade.get_object('gestionar_sets')
         self.main_window.connect('destroy', self.destroy)
@@ -111,4 +109,6 @@ class GestionarSets(Interfaz):
     def dinamizar(self, widget):
         texto = widget.get_text()
         texto = filter(str.isdigit, texto)
+        if len(texto) > 2:
+            texto = texto[:2]
         widget.set_text(texto)
