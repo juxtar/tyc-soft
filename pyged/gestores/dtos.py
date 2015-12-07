@@ -87,3 +87,22 @@ class DTOPartida:
         self.permitir_empate = permitir_empate
         self.tipo_puntuacion = tipo_puntuacion
         self.cantidad_de_sets = cantidad_de_sets
+
+
+class DTOResultado:
+    """Almacena informacion para la transferencia de datos de resultados"""
+    def __init__(self, id_resultado, id_partida, tipo, resultado_local, resultado_visitante, lista_dto_sets):
+        self.id_resultado = id_resultado
+        self.id_partida = id_partida
+        self.tipo = tipo
+        self.resultado_local = resultado_local
+        self.resultado_visitante = resultado_visitante
+        self.lista_dto_sets = lista_dto_sets
+
+class DTOSet:
+    """Almacena informacion para la transferencia de datos de un set"""
+    def __init__(self, id_set, puntaje_local, puntaje_visitante, numero_de_set):
+        self.id_set = id_set
+        self.puntaje_local = puntaje_local
+        self.puntaje_visitante = puntaje_visitante
+        self.numero_de_set = numero_de_set
