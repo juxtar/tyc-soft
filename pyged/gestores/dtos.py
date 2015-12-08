@@ -88,16 +88,27 @@ class DTOPartida:
         self.tipo_puntuacion = tipo_puntuacion
         self.cantidad_de_sets = cantidad_de_sets
 
+    def __repr__(self):
+        return '<DTOPartida(%r, %r, %r, %r, %r, %r)>' % (self.estado, self.instancia, self.nombre_local,
+                                                         self.nombre_visitante, self.tipo_puntuacion,
+                                                         self.cantidad_de_sets)
 
 class DTOResultado:
     """Almacena informacion para la transferencia de datos de resultados"""
-    def __init__(self, id_resultado, id_partida, tipo, resultado_local, resultado_visitante, lista_dto_sets):
+    def __init__(self, id_resultado, id_partida, tipo, local_presente, visitante_presente, resultado_local,
+                 resultado_visitante, lista_dto_sets):
         self.id_resultado = id_resultado
         self.id_partida = id_partida
         self.tipo = tipo
+        self.local_presente = local_presente
+        self.visitante_presente = visitante_presente
         self.resultado_local = resultado_local
         self.resultado_visitante = resultado_visitante
         self.lista_dto_sets = lista_dto_sets
+
+    def __repr__(self):
+        return '<DTOResultado(%r, %r, %r, %r)>' % (self.tipo, self.resultado_local, self.resultado_visitante,
+                                                   self.lista_dto_sets)
 
 class DTOSet:
     """Almacena informacion para la transferencia de datos de un set"""
@@ -106,3 +117,6 @@ class DTOSet:
         self.puntaje_local = puntaje_local
         self.puntaje_visitante = puntaje_visitante
         self.numero_de_set = numero_de_set
+
+    def __repr__(self):
+        return '<DTOSet(%r, %r, %r)>' % (self.numero_de_set, self.puntaje_local, self.puntaje_visitante)
