@@ -7,11 +7,12 @@ class GestorPartida(Singleton):
     def __init__(self):
         pass
 
-    def listar_partidas(self, id_participante=None, id_partida=None):
+    def listar_partidas(self, id_participante=None, id_partida=None, id_competencia=None):
         from gestorcompetencia import GestorCompetencia
 
         lista_partidas = GestorBaseDeDatos.get_instance().listar_partidas(id_participante = id_participante,
-                                                                          id_partida = id_partida)
+                                                                          id_partida = id_partida,
+                                                                          id_competencia = id_competencia)
         if id_partida is not None:
             lista_partidas = [lista_partidas]
         lista_dtos = []

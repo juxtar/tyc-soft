@@ -44,11 +44,13 @@ class GestorBaseDeDatos(Singleton):
         else:
             return query.all()
 
-    def listar_partidas(self, id_participante=None, id_partida=None):
+    def listar_partidas(self, id_participante=None, id_partida=None, id_competencia=None):
         query = self.session.query(Partida)
         if id_partida is not None:
             query = query.filter(Partida.id == id_partida)
             return query.one()
+        if id_competencia is not None:
+            query = query.filter(Partida.id_competencia == id_competencia)
         if id_participante is not None:
             query = query.filter(Partida.id_competidor_local == id_participante or
                              Partida.id_competidor_visitante == id_participante)
