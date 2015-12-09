@@ -92,7 +92,7 @@ class GestorCompetencia(Singleton):
 
     def generar_fixture(self, id_competencia):
         competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
-        lista_participantes = competencia.participante
+        lista_participantes = competencia.participante[:]
         lista_partidas = competencia.partidas
         cantidad_de_partidas = len(lista_partidas)
         cantidad_de_participantes = len(lista_participantes)
@@ -113,8 +113,13 @@ class GestorCompetencia(Singleton):
             lista_participantes.append(lista_participantes.pop(1))
         GestorBaseDeDatos.get_instance().modificar_competencia()
 
-    def modificar_competencia(self):
-        pass
+    def modificar_competencia(self, dto_comeptencia):
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto_competencia.id_competencia)
+        if dto_comeptencia.estado is not None:
+            competencia.estado = dto_comeptencia.estado
+            GestorBaseDeDatos.get_instance().modificar_competencia()
+
+
     def generar_tabla_posiciones(self, id_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
         lista_participantes= competencia.participantes
