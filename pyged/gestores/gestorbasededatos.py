@@ -112,3 +112,7 @@ class GestorBaseDeDatos(Singleton):
 
     def modificar_partida(self):
         self.session.commit()
+
+    def eliminar_partida(self, partida)
+        self.session.delete(partida)
+        self.session.commit()

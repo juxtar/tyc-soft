@@ -245,5 +245,7 @@ class GestorCompetencia(Singleton):
                             lista_dtos.append(dto)
         return lista_dtos
 
-    def eliminar_fiture(self):
-        pass
+    def eliminar_fixture(self, id_competencia):
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
+        for partida in competencia.partidas:
+            GestorBaseDeDatos.get_instance().eliminar_partida(partida)
