@@ -109,3 +109,6 @@ class GestorBaseDeDatos(Singleton):
 
     def modificar_usuario(self):
         self.session.commit()
+
+    def modificar_partida(self):
+        self.session.commit()
