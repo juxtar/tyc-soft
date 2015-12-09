@@ -241,8 +241,10 @@ class Partida(Base):
     proximo_perdedor = relationship("Partida", uselist=False, foreign_keys="Partida.id_proximo_perdedor")
     participante_local = relationship("Participante", uselist=False, foreign_keys="Partida.id_participante_local")
     participante_visitante = relationship("Participante", uselist=False, foreign_keys="Partida.id_participante_visitante")
-    resultado = relationship("Resultado", uselist=False, foreign_keys="Partida.id_resultado")
-    historial = relationship("Resultado", foreign_keys="Resultado.id_partida")
+    resultado = relationship("Resultado", uselist=False, foreign_keys="Partida.id_resultado",
+                             cascade="all, delete, delete-orphan")
+    historial = relationship("Resultado", foreign_keys="Resultado.id_partida",
+                             cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return '<Partida(%r, %r)>' % (self.instancia, self.estado)
@@ -301,7 +303,7 @@ class ResultadoPorSet(Resultado):
     __tablename__ = 'porsets'
 
     id = Column(Integer, ForeignKey('resultado.id'), primary_key=True)
-    sets = relationship("Set")
+    sets = relationship("Set", cascade="all, delete, delete-orphan")
 
     __mapper_args__ = {
         'polymorphic_identity':'porsets',
