@@ -2,31 +2,74 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 import gtk.glade
-from main import agregar_cuadro_error
+from main import agregar_cuadro_error,Interfaz
 from pyged.gestores.gestorparticipante import GestorParticipante
+from pyged.gestores.dtos import DTOParticipante
+from aviso import Exito
+from pyged.gestores.excepciones import NombreExistente, FaltaDeDatos
 
-class NuevoParticipante:
+class NuevoParticipante(Interfaz):
     """Interfaz para crear un nuevo participante"""
-    def __init__(self):
+    def __init__(self, id_competencia, ventana_padre):
+        self.id_competencia = id_competencia
+        self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file('glade\participante.glade')
         self.main_window = self.glade.get_object('nuevo_participante')
         self.glade.get_object('button5').connect('clicked', self.aceptar)
-        self.main_window.show_all()
-        self.infobar, boton_cerrar, self.cerrar_error, self.mostrar_error = agregar_cuadro_error(self.main_window)
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
+        self.main_window.show_all()
 
     def aceptar(self, widget):
-        pass
+        nombre = self.glade.get_object('entry1').get_text()
+        email = self.glade.get_object('entry2').get_text()
+        imagen = self.glade.get_object('filechooserbutton1')
+
+        if (self.validar_nombre(nombre) and self.validar_email(email)):
+            dto = DTOParticipante(None, nombre, email, self.id_competencia, None, imagen)
+            try:
+                exito = GestorParticipante.get_instance().nuevo_participante(dto)
+                if exito is 1:
+                    Exito(self)
+            except NombreExistente as e:
+                self.mostrar_error(e.mensaje)
+            except FaltaDeDatos as f:
+                self.mostrar_error(f.mensaje)
 
     def cancelar(self, widget):
-        pass
+        self.main_window.hide()
+        self.ventana_padre.show()
 
     def validar_nombre(self, nombre):
-        pass
+        for letra in nombre:
+            if not (letra.isalnum() or letra.isspace()):
+                self.mostrar_error('Nombre incorrecto, solo puede contener letras, numeros y espacios.')
+                return False
+                break
+        else:
+            return True
+
+    def validar_email(self, email):
+        caracteres = ['.','-','_']
+        if email.count('@') != 1:
+            self.mostrar_error('El correo electronico debe contener un @')
+            return False
+        emailenlista = email.split('@')
+        for letra in emailenlista[0]:
+            if not (letra.isalnum() or letra in caracteres):
+                self.mostrar_error('Nombre de correo incorrecto, solo debe tener numeros, letras, puntos o guiones')
+                return False
+        for caracter in emailenlista[1]:
+            if not (caracter.isalnum() or caracter == '.'):
+                self.mostrar_error('Dominio del correo electronico incorrecto, solo debe tener letras, numeros y puntos')
+                return False
+        else:
+            return True
 
 
-class VerParticipantes:
+class VerParticipantes(Interfaz):
     """Interfaz para ver los participantes de una competencia"""
     def __init__(self, id_competencia):
         self.id_competencia = id_competencia
@@ -34,9 +77,10 @@ class VerParticipantes:
         self.glade.add_from_file('glade\participante.glade')
         self.main_window = self.glade.get_object('ver_participantes')
         self.glade.get_object('button4').connect('clicked', self.volver)
-        self.main_window.show_all()
-        self.infobar, boton_cerrar, self.cerrar_error, self.mostrar_error = agregar_cuadro_error(self.main_window)
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
+        self.main_window.show_all()
 
         lista_participantes = GestorParticipante().get_instance().listar_participantes(id_competencia)
         modelo = self.glade.get_object('treeview1').get_model()
