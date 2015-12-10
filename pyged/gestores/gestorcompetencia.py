@@ -112,6 +112,7 @@ class GestorCompetencia(Singleton):
                 competencia.partidas.append(nueva_partida)
             lista_participantes.append(lista_participantes.pop(1))
         GestorBaseDeDatos.get_instance().modificar_competencia()
+        return 1
 
     def modificar_competencia(self, dto_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto_competencia.id_competencia)

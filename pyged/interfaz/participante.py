@@ -17,17 +17,34 @@ class NuevoParticipante(Interfaz):
         self.glade.add_from_file('glade\participante.glade')
         self.main_window = self.glade.get_object('nuevo_participante')
         self.glade.get_object('button5').connect('clicked', self.aceptar)
+        self.glade.get_object('filechooserbutton1').connect('file-set', self.imagen_seleccionada)
+        filtro_imagen = gtk.FileFilter()
+        filtro_imagen.set_name("Imagenes")
+        filtro_imagen.add_mime_type("image/png")
+        filtro_imagen.add_mime_type("image/jpeg")
+        filtro_imagen.add_mime_type("image/gif")
+        filtro_imagen.add_pattern("*.png")
+        filtro_imagen.add_pattern("*.jpg")
+        filtro_imagen.add_pattern("*.gif")
+        filtro_imagen.add_pattern("*.tif")
+        filtro_imagen.add_pattern("*.xpm")
+        self.glade.get_object('filechooserbutton1').add_filter(filtro_imagen)
+
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
+
+    def imagen_seleccionada(self, widget):
+        ruta_imagen = widget.get_filename()
+        self.glade.get_object('image1').set_from_file(ruta_imagen)
 
     def aceptar(self, widget):
         nombre = self.glade.get_object('entry1').get_text()
         email = self.glade.get_object('entry2').get_text()
         imagen = self.glade.get_object('filechooserbutton1')
 
-        if (self.validar_nombre(nombre) and self.validar_email(email)):
+        if self.validar_nombre(nombre) and self.validar_email(email):
             dto = DTOParticipante(None, nombre, email, self.id_competencia, None, imagen)
             try:
                 exito = GestorParticipante.get_instance().nuevo_participante(dto)
@@ -37,6 +54,9 @@ class NuevoParticipante(Interfaz):
                 self.mostrar_error(e.mensaje)
             except FaltaDeDatos as f:
                 self.mostrar_error(f.mensaje)
+
+    def destroy(self, widget):
+        self.cancelar(None)
 
     def cancelar(self, widget):
         self.main_window.hide()
