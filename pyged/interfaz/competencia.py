@@ -7,6 +7,7 @@ from pyged.gestores.dtos import DTOCompetencia, DTOLugar
 from pyged.gestores.excepciones import NombreExistente
 from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.gestorlugar import GestorLugar
+from pyged.gestores.gestorpartida import GestorPartida
 from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 
@@ -31,8 +32,9 @@ def obtener_descendientes(widget, tipo):
 class VerCompetencia(Interfaz):
     """ Muestra informacion de la competencia y acceso a otras interfaces para el manejo de la misma
     """
-    def __init__(self, id_competencia):
+    def __init__(self, id_competencia, ventana_padre):
         self.id_competencia = id_competencia
+        self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
         self.glade.get_object('button10').connect('clicked', self.ver_participantes)
@@ -46,6 +48,12 @@ class VerCompetencia(Interfaz):
         self.glade.get_object('deporte').set_text(datos_competencia.deporte)
         self.glade.get_object('estado').set_text(datos_competencia.estado)
 
+        lista_de_partidas = GestorPartida.get_instance().listar_partidas(id_competencia = id_competencia)
+        self.glade.get_object("treeview2").get_model().clear()
+        for partida in lista_de_partidas[:5]:
+            if partida.estado != 'Finalizada':
+                self.glade.get_object("treeview2").get_model().append([partida.nombre_local, partida.nombre_visitante])
+
         self.main_window = self.glade.get_object('ver_competencia')
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
@@ -53,10 +61,11 @@ class VerCompetencia(Interfaz):
         self.main_window.show_all()
 
     def destroy(self, widget):
-        pass
+        self.volver(None)
 
     def volver(self, widget):
-        pass
+        self.main_window.hide()
+        self.ventana_padre.show()
 
     def ver_participantes(self, widget):
         pass

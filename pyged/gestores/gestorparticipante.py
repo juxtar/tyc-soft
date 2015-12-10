@@ -30,6 +30,7 @@ class GestorParticipante(Singleton):
         competencia.participante.append(part)
         competencia.estado = 'Creada'
         GestorBaseDeDatos.get_instance().modificar_competencia()
+        return 1
 
 
     def modificar_participante(self):

@@ -113,10 +113,10 @@ class GestorCompetencia(Singleton):
             lista_participantes.append(lista_participantes.pop(1))
         GestorBaseDeDatos.get_instance().modificar_competencia()
 
-    def modificar_competencia(self, dto_comeptencia):
+    def modificar_competencia(self, dto_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto_competencia.id_competencia)
-        if dto_comeptencia.estado is not None:
-            competencia.estado = dto_comeptencia.estado
+        if dto_competencia.estado is not None:
+            competencia.estado = dto_competencia.estado
             GestorBaseDeDatos.get_instance().modificar_competencia()
 
 
