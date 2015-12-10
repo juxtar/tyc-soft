@@ -48,6 +48,7 @@ class GestorPartida(Singleton):
                                partida.resultado.puntos_de_local, partida.resultado.puntos_de_visitante, None)
     def agregar_resultado(self, dto):
         partida = GestorBaseDeDatos.get_instance().listar_partidas(id_partida = dto.id_partida)
+        resultado_new = None
         if dto.tipo == 'porsets':
             lista_de_sets = []
             for dtoset in dto.lista_dto_sets:

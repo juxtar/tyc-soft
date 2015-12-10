@@ -249,3 +249,10 @@ class GestorCompetencia(Singleton):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
         for partida in competencia.partidas:
             GestorBaseDeDatos.get_instance().eliminar_partida(partida)
+
+    def listar_deportes(self):
+        deportes = GestorBaseDeDatos.get_instance().listar_deportes()
+        lista_deportes = []
+        for d in deportes:
+            lista_deportes.append(d.nombre)
+        return lista_deportes
