@@ -145,6 +145,16 @@ class GestionarFinal(Interfaz):
         self.glade.get_object('label42').set_text(datos_partida.nombre_visitante)
         self.glade.get_object('label40').set_sensitive(datos_partida.permitir_empate)
         self.glade.get_object('radiobutton2').set_sensitive(datos_partida.permitir_empate)
+        if datos_partida.estado == 'Finalizada':
+            datos_resultado = GestorPartida.get_instance().listar_resultado(id_partida)
+            if datos_resultado.resultado_local == 1.0:
+                self.glade.get_object('radiobutton1').set_active(True)
+            elif datos_resultado.resultado_local == 0.0:
+                self.glade.get_object('radiobutton3').set_active(True)
+            else:
+                self.glade.get_object('radiobutton2').set_active(True)
+            self.glade.get_object('checkbutton1').set_active(datos_resultado.local_presente)
+            self.glade.get_object('checkbutton2').set_active(datos_resultado.visitante_presente)
 
         self.main_window = self.glade.get_object('gestionar_final')
         self.main_window.connect('destroy', self.destroy)
@@ -201,6 +211,13 @@ class GestionarPuntos(Interfaz):
         self.glade.get_object('checkbutton5').set_label(datos_partida.nombre_local)
         self.glade.get_object('checkbutton6').set_label(datos_partida.nombre_visitante)
         self.permitir_empate = datos_partida.permitir_empate
+
+        if datos_partida.estado == 'Finalizada':
+            datos_resultado = GestorPartida.get_instance().listar_resultado(id_partida)
+            self.glade.get_object('checkbutton5').set_active(datos_resultado.local_presente)
+            self.glade.get_object('checkbutton6').set_active(datos_resultado.visitante_presente)
+            self.glade.get_object('spinbutton1').set_value(datos_resultado.resultado_local)
+            self.glade.get_object('spinbutton2').set_value(datos_resultado.resultado_visitante)
 
         self.main_window = self.glade.get_object('gestionar_puntos')
         self.main_window.connect('destroy', self.destroy)
@@ -269,6 +286,14 @@ class GestionarSets(Interfaz):
                 widget.set_sensitive(i<datos_partida.cantidad_de_sets)
             widgets['local'].connect('changed', self.dinamizar)
             widgets['visitante'].connect('changed', self.dinamizar)
+
+        if datos_partida.estado == 'Finalizada':
+            datos_resultado = GestorPartida.get_instance().listar_resultado(id_partida)
+            self.glade.get_object('checkbutton4').set_active(datos_resultado.local_presente)
+            self.glade.get_object('checkbutton3').set_active(datos_resultado.visitante_presente)
+            for dto_set in datos_resultado.lista_dto_sets:
+                self.lista_widgets[dto_set.numero_de_set-1]['local'].set_text(str(dto_set.puntaje_local))
+                self.lista_widgets[dto_set.numero_de_set-1]['visitante'].set_text(str(dto_set.puntaje_visitante))
 
         self.main_window = self.glade.get_object('gestionar_sets')
         self.main_window.connect('destroy', self.destroy)

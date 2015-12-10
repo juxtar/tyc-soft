@@ -151,6 +151,11 @@ class NuevaCompetencia(Interfaz):
         self.glade.get_object('button4').connect('clicked', self.volver)
         self.glade.get_object('button5').connect('clicked', self.aceptar)
 
+        deportes_cargados = GestorCompetencia.get_instance().listar_deportes()
+        self.glade.get_object('comboDeporte1').get_model().clear()
+        for deporte in deportes_cargados:
+            self.glade.get_object('comboDeporte1').append_text(deporte)
+
         botones = obtener_descendientes(self.glade.get_object('vbox1'), 'RadioButton')
         botones.append(self.glade.get_object('empate'))
         for b in botones:
