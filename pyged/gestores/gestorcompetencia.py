@@ -129,8 +129,8 @@ class GestorCompetencia(Singleton):
         ganar = competencia.puntos_por_ganar
         empate = competencia.puntos_por_empate
         lista_dtos = []
+        lista_partidas = competencia.partidas[:]
         for participante in lista_participantes:
-            lista_partidas = competencia.partidas[:]
             for partida in lista_partidas:
                 if not(partida.participante_local == participante.id or partida.participante_visitante == participante.id):
                     lista_partidas.remove(partida)
@@ -143,10 +143,11 @@ class GestorCompetencia(Singleton):
             nombre_dummy = 'Dummy' + competencia.nombre
             if participante.nombre != nombre_dummy:
                 for partida in lista_partidas:
-                    if partida.estado == 'Finalizado':
-                        if partida.resultado.tipo == 'Por Puntuacion':
+                    if partida.estado == 'Finalizada':
+                        dto = None
+                        if partida.resultado.tipo == 'porpuntuacion':
                             puntos += presentarse
-                            if partida.id_competidor_local == participante.id:
+                            if partida.id_participante_local == participante.id:
                                 if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
                                     puntos += ganar
                                     partidos_ganados += 1
@@ -178,9 +179,9 @@ class GestorCompetencia(Singleton):
                                     goles_en_contra += partida.resultado.puntos_de_local
                             dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
                                            partidos_perdidos, goles_a_favor, goles_en_contra)
-                        if partida.resultado.tipo == 'Por Resultado Final':
+                        if partida.resultado.tipo == 'porresultadofinal':
                             puntos = puntos + presentarse
-                            if partida.id_competidor_local == participante.id:
+                            if partida.id_participante_local == participante.id:
                                 if partida.resultado.puntos_de_local == 1:
                                     puntos += ganar
                                     partidos_ganados += 1
@@ -200,9 +201,9 @@ class GestorCompetencia(Singleton):
                                     partidos_perdidos += 1
                             dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, partidos_empatados,
                                            partidos_perdidos, None, None)
-                        if partida.resultado.tipo == 'Por Set':
+                        if partida.resultado.tipo == 'porsets':
                             puntos += presentarse
-                            if partida.id_competidor_local == participante.id:
+                            if partida.id_participante_local == participante.id:
                                 lista_sets = partida.resultado.sets
                                 ganador_local = 0
                                 ganador_visitante = 0
@@ -220,7 +221,7 @@ class GestorCompetencia(Singleton):
                                     partidos_ganados += 1
                                 else:
                                     partidos_perdidos += + 1
-                            if partida.id_competidor_visitante == participante.id:
+                            if partida.id_participante_visitante == participante.id:
                                 lista_sets = partida.resultado.sets
                                 ganador_local = 0
                                 ganador_visitante = 0
@@ -240,7 +241,7 @@ class GestorCompetencia(Singleton):
                                     partidos_perdidos += 1
                             dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, None, partidos_perdidos,
                                            goles_a_favor, goles_en_contra)
-                    lista_dtos.append(dto)
+                        lista_dtos.append(dto)
         return lista_dtos
 
     def eliminar_fixture(self, id_competencia):
