@@ -445,7 +445,7 @@ class MostrarTablaPosiciones:
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button12').connect('clicked', self.volver)
         datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
-        self.glade.get_object('label53').set_text(datos_competencia.nombre)
+        self.glade.get_object('label53').set_text(datos_competencia[0].nombre)
 
         self.treeview = self.glade.get_object('treeview2')
         self.treeview.get_model().clear()
