@@ -133,6 +133,9 @@ class MostrarFixture(Interfaz):
         opc = {'porpuntuacion': MostrarResultadoPuntos, 'porsets': MostrarResultadoSets}
         id_partida = model.get_value(model.get_iter(cursor), 4)
         dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
+        if 'Libre' in [dto_partida_seleccionada.nombre_local, dto_partida_seleccionada.nombre_visitante]:
+            self.mostrar_error('Partida libre: No se puede detallar un resultado.')
+            return
         if dto_partida_seleccionada.tipo_puntuacion == 'porresultadofinal':
             self.mostrar_error('No corresponde mostrar detalle para este tipo de puntuacion.')
             return
