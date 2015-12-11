@@ -143,8 +143,8 @@ class GestorCompetencia(Singleton):
             nombre_dummy = 'Dummy' + competencia.nombre
             if participante.nombre != nombre_dummy:
                 for partida in lista_partidas:
-                    if partida.resultado.tipo == 'Por Puntuacion':
-                        if partida.estado == 'Finalizado':
+                    if partida.estado == 'Finalizado':
+                        if partida.resultado.tipo == 'Por Puntuacion':
                             puntos += presentarse
                             if partida.id_competidor_local == participante.id:
                                 if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
@@ -179,8 +179,7 @@ class GestorCompetencia(Singleton):
                             dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
                                            partidos_perdidos, goles_a_favor, goles_en_contra)
                             lista_dtos.append(dto)
-                    if partida.resultado.tipo == 'Por Resultado Final':
-                        if partida.estado == 'Finalizado':
+                        if partida.resultado.tipo == 'Por Resultado Final':
                             puntos = puntos + presentarse
                             if partida.id_competidor_local == participante.id:
                                 if partida.resultado.puntos_de_local == 1:
@@ -203,8 +202,7 @@ class GestorCompetencia(Singleton):
                             dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, partidos_empatados,
                                            partidos_perdidos, None, None)
                             lista_dtos.append(dto)
-                    if partida.resultado.tipo == 'Por Set':
-                        if partida.estado == 'Finalizado':
+                        if partida.resultado.tipo == 'Por Set':
                             puntos += presentarse
                             if partida.id_competidor_local == participante.id:
                                 lista_sets = partida.resultado.sets
