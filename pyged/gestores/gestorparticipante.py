@@ -13,16 +13,18 @@ class GestorParticipante(Singleton):
 
     def nuevo_participante(self, dto):
         """Realiza las correspondientes validaciones con del participante y luego lo agrega al sistema"""
-        if dto.nombre is None:
-                raise FaltaDeDatos('Debe escribir un nombre para este participante')
-        if dto.correo_electronico is None:
-                raise FaltaDeDatos('Debe escribir un correo electronico para este participante')
+        if dto.nombre in [None, '']:
+                raise FaltaDeDatos('Debe escribir un nombre para este participante.')
+        if dto.correo_electronico in [None, '']:
+                raise FaltaDeDatos('Debe escribir un correo electronico para este participante.')
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto.id_competencia)
+        if competencia.estado in ['En Disputa', 'Finalizada']:
+            raise FaltaDeDatos('No se puede agregar participante a una competencia a la que ya se le agregaron resultados.')
         for participante in competencia.participantes:
             if participante.nombre == dto.nombre:
-                raise NombreExistente('Este participante ya existe en esta competencia')
+                raise NombreExistente('Este participante ya existe en esta competencia.')
             if participante.correo_electronico == dto.correo_electronico:
-                raise NombreExistente('Este correo electronico ya existe en esta competencia')
+                raise NombreExistente('Este correo electronico ya existe en esta competencia.')
         part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
         historial = HistorialNombres(nombre = part.nombre, fecha = datetime.now().date(), id_participante = part.id)
         part.historial_nombres = [historial]
@@ -30,7 +32,6 @@ class GestorParticipante(Singleton):
         competencia.estado = 'Creada'
         GestorBaseDeDatos.get_instance().modificar_competencia()
         return 1
-
 
     def modificar_participante(self):
         pass
