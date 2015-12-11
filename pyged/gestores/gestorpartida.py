@@ -75,7 +75,7 @@ class GestorPartida(Singleton):
         lista_partidas = GestorBaseDeDatos.get_instance().listar_partidas(id_competencia = partida.id_competencia)
         terminado = 0
         for partidas in lista_partidas:
-            if partidas.resultado is not None:
+            if partidas.estado in ['Finalizado', 'Finalizada']:
                 terminado += 1
         if terminado == len(lista_partidas):
             dtocompetencia = DTOCompetencia(partida.id_competencia,None, None, 'Finalizada', None, None, None, None, None, None, None,

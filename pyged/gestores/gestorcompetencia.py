@@ -98,19 +98,29 @@ class GestorCompetencia(Singleton):
             raise FaltaDeDatos('No hay suficientes participantes en la competencia.')
         cantidad_de_partidas = len(competencia.partidas)
         cantidad_de_participantes = len(lista_participantes)
+        nombre_dummy = "Dummy" + competencia.nombre
         if cantidad_de_partidas > 0:
             GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
         if (cantidad_de_participantes % 2) == 1:
-            nombre_dummy = "Dummy" + competencia.nombre
             dummy  = Participante(nombre= nombre_dummy, correo_electronico = nombre_dummy,
                                   id_competencia = competencia.id)
             lista_participantes.append(dummy)
             cantidad_de_participantes = len(lista_participantes)
         for fecha in range(cantidad_de_participantes - 1):
             for partida in range(cantidad_de_participantes/2):
-                nueva_partida = Partida(estado='Creada', instancia= fecha+1,
-                participante_local = lista_participantes[partida],
-                participante_visitante = lista_participantes[cantidad_de_participantes - (partida + 1)])
+                if lista_participantes[partida].nombre == nombre_dummy:
+                    nueva_partida = Partida(estado='Finalizado', instancia= fecha+1,
+                                            participante_local = lista_participantes[partida],
+                                            participante_visitante = lista_participantes[cantidad_de_participantes - (partida + 1)])
+                elif lista_participantes[cantidad_de_participantes - (partida + 1)].nombre== nombre_dummy:
+                    nueva_partida = Partida(estado='Finalizado', instancia= fecha+1,
+                                            participante_local = lista_participantes[partida],
+                                            participante_visitante = lista_participantes[cantidad_de_participantes - (partida + 1)])
+                else:
+                    nueva_partida = Partida(estado='Creada', instancia= fecha+1,
+                                            participante_local = lista_participantes[partida],
+                                            participante_visitante = lista_participantes[cantidad_de_participantes - (partida + 1)])
+
                 competencia.partidas.append(nueva_partida)
             lista_participantes.append(lista_participantes.pop(1))
         GestorBaseDeDatos.get_instance().modificar_competencia()
@@ -245,7 +255,7 @@ class GestorCompetencia(Singleton):
                                partidos_perdidos, goles_a_favor, goles_en_contra)
                 lista_dtos.append(dto)
             if tipo == 'porsets':
-                dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, None, partidos_perdidos,
+                dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, 0, partidos_perdidos,
                                goles_a_favor, goles_en_contra)
                 lista_dtos.append(dto)
         return lista_dtos
