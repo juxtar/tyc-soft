@@ -36,8 +36,8 @@ class GestorParticipante(Singleton):
     def modificar_participante(self):
         pass
 
-    def eliminar_participante(self):
-        pass
+    def eliminar_participante(self, participante):
+        GestorBaseDeDatos.get_instance().eliminar_participante(participante)
 
     def listar_participantes(self, id_competencia = None, id_participante=None):
         lista_participantes = []
