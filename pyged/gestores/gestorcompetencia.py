@@ -1,6 +1,6 @@
 from main import Singleton
 from gestorbasededatos import GestorBaseDeDatos
-from excepciones import NombreExistente
+from excepciones import NombreExistente, FaltaDeDatos
 from dtos import *
 from pyged.almacenamiento import *
 
@@ -54,11 +54,11 @@ class GestorCompetencia(Singleton):
             competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
             usuario = GestorUsuario.get_instance().obtener_usuario(competencia.id_usuario)
             if competencia.tipo =='eliminatoriasimple' or competencia.tipo =='eliminatoriadoble':
-                 lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
-                                                  competencia.estado, competencia.reglamento, competencia.id_usuario,
-                                                  usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
-                                                  None, None, None, competencia.deporte.nombre, None,
-                                                  competencia.tantos_presentismo, None))
+                lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
+                                                 competencia.estado, competencia.reglamento, competencia.id_usuario,
+                                                 usuario.nombre, competencia.tipo, competencia.cantidad_de_sets,
+                                                 None, None, None, competencia.deporte.nombre, None,
+                                                 competencia.tantos_presentismo, None))
             else:
                 lista_dtos.append(DTOCompetencia(competencia.id, competencia.nombre, competencia.tipo_puntuacion,
                                                  competencia.estado, competencia.reglamento, competencia.id_usuario,
@@ -91,10 +91,12 @@ class GestorCompetencia(Singleton):
         return lista_dtos
 
     def generar_fixture(self, id_competencia):
-        competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
-        lista_participantes = competencia.participante[:]
-        lista_partidas = competencia.partidas
-        cantidad_de_partidas = len(lista_partidas)
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
+        competencia.estado = 'Planificada'
+        lista_participantes = competencia.participantes[:]
+        if len(lista_participantes) < 2:
+            raise FaltaDeDatos('No hay suficientes participantes en la competencia.')
+        cantidad_de_partidas = len(competencia.partidas)
         cantidad_de_participantes = len(lista_participantes)
         if cantidad_de_partidas > 0:
             GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
@@ -108,18 +110,17 @@ class GestorCompetencia(Singleton):
             for partida in range(cantidad_de_participantes/2):
                 nueva_partida = Partida(estado='Creada', instancia= fecha+1,
                 participante_local = lista_participantes[partida],
-                participante_visitante = lista_participantes[cantidad_de_participantes - partida])
+                participante_visitante = lista_participantes[cantidad_de_participantes - (partida + 1)])
                 competencia.partidas.append(nueva_partida)
             lista_participantes.append(lista_participantes.pop(1))
         GestorBaseDeDatos.get_instance().modificar_competencia()
         return 1
 
     def modificar_competencia(self, dto_competencia):
-        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto_competencia.id_competencia)
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto_competencia.id)
         if dto_competencia.estado is not None:
             competencia.estado = dto_competencia.estado
             GestorBaseDeDatos.get_instance().modificar_competencia()
-
 
     def generar_tabla_posiciones(self, id_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
