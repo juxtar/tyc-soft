@@ -13,9 +13,9 @@ from aviso import Exito
 
 class MostrarFixture(Interfaz):
     """Interfaz que muestra todas las partidas de la competencia"""
-    def __init__(self, id_competencia, ventana_padre):
+    def __init__(self, id_competencia, clase_padre):
         self.id_competencia = id_competencia
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button1').connect('clicked', self.volver)
@@ -38,6 +38,14 @@ class MostrarFixture(Interfaz):
         instancias = set()
         equipos = set()
         for dto in self.lista_partidas:
+            if 'Dummy' in dto.nombre_local:
+                dto.nombre_local = 'Libre'
+                dto.ganador = '-'
+                continue
+            if 'Dummy' in dto.nombre_visitante:
+                dto.nombre_visitante = 'Libre'
+                dto.ganador = '-'
+                continue
             equipos.add(dto.nombre_local)
             equipos.add(dto.nombre_visitante)
             instancias.add('Fecha '+str(dto.instancia))
@@ -136,6 +144,10 @@ class MostrarFixture(Interfaz):
         cursor, _ = self.treeview.get_cursor()
         id_partida = model.get_value(model.get_iter(cursor), 4)
         dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
+        if 'Libre' in [dto_partida_seleccionada.nombre_local, dto_partida_seleccionada.nombre_visitante]:
+            self.mostrar_error('Partida libre: No se puede gestionar un resultado.')
+            return
+
         n = opc[dto_partida_seleccionada.tipo_puntuacion](id_partida, self)
         self.main_window.hide()
 
@@ -147,7 +159,8 @@ class MostrarFixture(Interfaz):
 
     def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.main_window.show()
+        self.clase_padre.actualizar()
 
 class GestionarFinal(Interfaz):
     """Interfaz para gestionar un resultado de tipo final"""

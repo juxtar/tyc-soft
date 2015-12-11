@@ -45,3 +45,4 @@ class Interfaz:
             contenedor.pack_start(label, True, True, 0)
             label.show()
         self.infobar.show()
+        print '\a',

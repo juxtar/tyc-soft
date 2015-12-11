@@ -60,8 +60,17 @@ class GestorPartida(Singleton):
             resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = dto.resultado_local,
                 resultado_de_visitante = dto.resultado_visitante)
         elif dto.tipo == 'porpuntuacion':
-            resultado_new = ResultadoPorPuntuacion(fecha = datetime.now().date(), puntos_de_local = dto.resultado_local,
-                puntos_de_visitante = dto.resultado_visitante)
+            dto_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=partida.id_competencia)[0]
+            puntos_local = dto.resultado_local
+            puntos_visitante = dto.resultado_visitante
+            if not dto.local_presente:
+                puntos_local = 0
+                puntos_visitante = dto_competencia.tantos_presentismo
+            if not dto.visitante_presente:
+                puntos_visitante = 0
+                puntos_local = dto_competencia.tantos_presentismo
+            resultado_new = ResultadoPorPuntuacion(fecha = datetime.now().date(), puntos_de_local = puntos_local,
+                puntos_de_visitante = puntos_visitante)
         if partida.resultado is None:
             dtocompetencia = DTOCompetencia(partida.id_competencia, None, None, 'En Disputa',None, None, None, None, None, None,None,
                                  None, None, None, None, None)

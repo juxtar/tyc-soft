@@ -5,6 +5,7 @@ import gtk.glade
 from os import path
 from main import agregar_cuadro_error,Interfaz
 from pyged.gestores.gestorparticipante import GestorParticipante
+from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.dtos import DTOParticipante
 from aviso import Exito
 from pyged.gestores.excepciones import NombreExistente, FaltaDeDatos
@@ -102,6 +103,9 @@ class VerParticipantes(Interfaz):
         self.main_window = self.glade.get_object('ver_participantes')
         self.glade.get_object('button4').connect('clicked', self.volver)
         self.glade.get_object('button1').connect('clicked', self.nuevo_participante)
+        datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)[0]
+        self.glade.get_object('label1').set_text(datos_competencia.nombre)
+
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)

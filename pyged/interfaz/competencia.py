@@ -45,7 +45,10 @@ class VerCompetencia(Interfaz):
         self.glade.get_object('button7').connect('clicked', self.mostrar_tabla)
         self.glade.get_object('button6').connect('clicked', self.mostrar_fixture)
 
-        datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)[0]
+        self.actualizar()
+
+    def actualizar(self):
+        datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=self.id_competencia)[0]
         self.glade.get_object('NombreCompetencia').set_text(datos_competencia.nombre)
         self.glade.get_object('modalidad').set_text(datos_competencia.tipo)
         self.glade.get_object('deporte').set_text(datos_competencia.deporte)
@@ -53,8 +56,11 @@ class VerCompetencia(Interfaz):
         self.estado_competencia = datos_competencia.estado
         self.tipo_competencia = datos_competencia.tipo
 
-        lista_de_partidas = GestorPartida.get_instance().listar_partidas(id_competencia = id_competencia)
+        lista_de_partidas = GestorPartida.get_instance().listar_partidas(id_competencia = self.id_competencia)
         self.glade.get_object("treeview2").get_model().clear()
+        for partida in lista_de_partidas:
+            if 'Dummy' in partida.nombre_visitante or 'Dummy' in partida.nombre_local:
+                lista_de_partidas.remove(partida)
         for partida in lista_de_partidas[:5]:
             if partida.estado != 'Finalizada':
                 self.glade.get_object("treeview2").get_model().append([partida.nombre_local, partida.nombre_visitante])
@@ -99,7 +105,7 @@ class VerCompetencia(Interfaz):
         if self.estado_competencia == 'Creada':
             self.mostrar_error('No se han planificado partidas todavia.')
             return
-        n = MostrarFixture(self.id_competencia, self.main_window)
+        n = MostrarFixture(self.id_competencia, self)
         self.main_window.hide()
 
 class ListarMisCompetencias(Interfaz):
@@ -159,9 +165,12 @@ class ListarMisCompetencias(Interfaz):
     def ver_competencia(self, widget):
         model = self.glade.get_object('treeview1').get_model()
         cursor, _ = self.glade.get_object('treeview1').get_cursor()
-        id_competencia = model.get_value(model.get_iter(cursor), 5)
-        n = VerCompetencia(id_competencia, self.main_window)
-        self.main_window.hide()
+        try:
+            id_competencia = model.get_value(model.get_iter(cursor), 5)
+            n = VerCompetencia(id_competencia, self.main_window)
+            self.main_window.hide()
+        except TypeError:
+            self.mostrar_error('Debe seleccionar una competencia.')
 
     def nueva_competencia(self, widget):
         self.main_window.hide()
