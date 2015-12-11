@@ -87,8 +87,8 @@ class MostrarFixture(Interfaz):
             combo_equipo.append_text(x)
         combo_equipo.set_active(0)
 
-        combo_instancia.connect('changed', self.dinamizar)
-        combo_equipo.connect('changed', self.dinamizar)
+        self.handler_id_instancia = combo_instancia.connect('changed', self.dinamizar)
+        self.handler_id_equipo = combo_equipo.connect('changed', self.dinamizar)
 
     def dinamizar(self, widget):
         nombre = gtk.Buildable.get_name(widget)
@@ -138,6 +138,9 @@ class MostrarFixture(Interfaz):
         dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
         n = opc[dto_partida_seleccionada.tipo_puntuacion](id_partida, self)
         self.main_window.hide()
+
+        self.glade.get_object('combobox1').handler_block(self.handler_id_instancia)
+        self.glade.get_object('combobox2').handler_block(self.handler_id_equipo)
 
     def destroy(self, widget):
         gtk.main_quit()
@@ -440,7 +443,9 @@ class MostrarTablaPosiciones:
         self.id_competencia = id_competencia
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
-        self.glade.get_object('button5').connect('clicked', self.volver)
+        self.glade.get_object('button12').connect('clicked', self.volver)
+        datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
+        self.glade.get_object('label53').set_text(datos_competencia.nombre)
 
         self.treeview = self.glade.get_object('treeview2')
         self.treeview.get_model().clear()

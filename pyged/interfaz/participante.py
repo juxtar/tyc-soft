@@ -46,7 +46,8 @@ class NuevoParticipante(Interfaz):
         email = self.glade.get_object('entry2').get_text()
         imagen = self.glade.get_object('filechooserbutton1')
 
-        if self.validar_nombre(nombre) and self.validar_email(email):
+        errores = self.validar_nombre(nombre) + self.validar_email(email)
+        if not errores:
             dto = DTOParticipante(None, nombre, email, self.id_competencia, None, imagen)
             try:
                 exito = GestorParticipante.get_instance().nuevo_participante(dto)
@@ -56,6 +57,8 @@ class NuevoParticipante(Interfaz):
                 self.mostrar_error(e.mensaje)
             except FaltaDeDatos as f:
                 self.mostrar_error(f.mensaje)
+        else:
+            self.mostrar_error(*errores)
 
     def destroy(self, widget):
         gtk.main_quit()
@@ -68,27 +71,25 @@ class NuevoParticipante(Interfaz):
     def validar_nombre(self, nombre):
         for letra in nombre:
             if not (letra.isalnum() or letra.isspace()):
-                self.mostrar_error('Nombre incorrecto, solo puede contener letras, numeros y espacios.')
-                return False
+                return ['Nombre incorrecto, solo puede contener letras, numeros y espacios.']
         else:
-            return True
+            return []
 
     def validar_email(self, email):
+        errores = []
         caracteres = ['.','-','_']
         if email.count('@') != 1:
-            self.mostrar_error('El correo electronico debe contener un @')
-            return False
+            return ['El correo electronico debe contener un @']
         emailenlista = email.split('@')
         for letra in emailenlista[0]:
             if not (letra.isalnum() or letra in caracteres):
-                self.mostrar_error('Nombre de correo incorrecto, solo debe tener numeros, letras, puntos o guiones')
-                return False
+                errores.append('Nombre de correo incorrecto, solo debe tener numeros, letras, puntos o guiones.')
+                break
         for caracter in emailenlista[1]:
             if not (caracter.isalnum() or caracter == '.'):
-                self.mostrar_error('Dominio del correo electronico incorrecto, solo debe tener letras, numeros y puntos')
-                return False
-        else:
-            return True
+                errores.append('Dominio del correo electronico incorrecto, solo debe tener letras, numeros y puntos.')
+                break
+        return errores
 
 
 class VerParticipantes(Interfaz):
