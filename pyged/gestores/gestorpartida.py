@@ -21,16 +21,16 @@ class GestorPartida(Singleton):
             lista_partidas = [lista_partidas]
         lista_dtos = []
         for partida in lista_partidas:
-            competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=partida.id_competencia)
+            competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=partida.id_competencia)[0]
             dto = DTOPartida(partida.id, partida.estado, partida.instancia, partida.local_presente,
-                             partida.local_visitante, partida.id_resultado, partida.participante_local.nombre,
+                             partida.visitante_presente, partida.id_resultado, partida.participante_local.nombre,
                              partida.participante_visitante.nombre, competencia.permitir_empate,
                              competencia.tipo_puntuacion, competencia.cantidad_de_sets)
             lista_dtos.append(dto)
         return lista_dtos
 
     def listar_resultado(self, id_partida):
-        partida = GestorBaseDeDatos.get_instance().listar_partida(id_partida = id_partida)
+        partida = GestorBaseDeDatos.get_instance().listar_partidas(id_partida = id_partida)
         if partida.resultado is None:
             raise FaltaDeDatos('No existen Resultados para esta partida.')
         if partida.resultado.tipo == 'porsets':
@@ -60,7 +60,7 @@ class GestorPartida(Singleton):
             resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = dto.resultado_local,
                 resultado_de_visitante = dto.resultado_visitante)
         elif dto.tipo == 'porpuntuacion':
-            resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), puntos_de_local = dto.resultado_local,
+            resultado_new = ResultadoPorPuntuacion(fecha = datetime.now().date(), puntos_de_local = dto.resultado_local,
                 puntos_de_visitante = dto.resultado_visitante)
         if partida.resultado is None:
             dtocompetencia = DTOCompetencia(partida.id_competencia, None, None, 'En Disputa',None, None, None, None, None, None,None,
@@ -81,3 +81,4 @@ class GestorPartida(Singleton):
             dtocompetencia = DTOCompetencia(partida.id_competencia,None, None, 'Finalizada', None, None, None, None, None, None, None,
                              None, None, None, None, None)
             GestorCompetencia.get_instance().modificar_competencia(dtocompetencia)
+        return 1

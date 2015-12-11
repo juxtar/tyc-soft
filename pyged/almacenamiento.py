@@ -196,7 +196,7 @@ class Participante(Base):
 
     id = Column(Integer, primary_key=True)
     nombre = Column(String, nullable=False)
-    correo_electronico = Column(String, nullable=False, unique=True)
+    correo_electronico = Column(String, nullable=False)
     id_competencia = Column(Integer, ForeignKey('competencia.id'))
     historial_nombres = relationship("HistorialNombres")
 
@@ -244,7 +244,7 @@ class Partida(Base):
     resultado = relationship("Resultado", uselist=False, foreign_keys="Partida.id_resultado",
                              cascade="save-update, merge, delete")
     historial = relationship("Resultado", foreign_keys="Resultado.id_partida",
-                             cascade="save-update, merge, delete")
+                             cascade="save-update, merge, delete", post_update=True)
 
     def __repr__(self):
         return '<Partida(%r, %r)>' % (self.instancia, self.estado)

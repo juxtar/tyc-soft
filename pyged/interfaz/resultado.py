@@ -22,10 +22,19 @@ class MostrarFixture(Interfaz):
         self.glade.get_object('button2').connect('clicked', self.ver_detalle)
         self.glade.get_object('button3').connect('clicked', self.gestionar_resultado)
 
+        self.main_window = self.glade.get_object('fixture')
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        boton_cerrar.connect('clicked', self.cerrar_error)
+        self.main_window.show_all()
+
+        self.actualizar()
+
+    def actualizar(self):
         combo_instancia = self.glade.get_object('combobox1')
         combo_equipo =  self.glade.get_object('combobox2')
 
-        self.lista_partidas = GestorPartida.get_instance().listar_partidas(id_competencia=id_competencia)
+        self.lista_partidas = GestorPartida.get_instance().listar_partidas(id_competencia=self.id_competencia)
         instancias = set()
         equipos = set()
         for dto in self.lista_partidas:
@@ -78,11 +87,6 @@ class MostrarFixture(Interfaz):
             combo_equipo.append_text(x)
         combo_equipo.set_active(0)
 
-        self.main_window = self.glade.get_object('fixture')
-        self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
-        boton_cerrar.connect('clicked', self.cerrar_error)
-        self.main_window.show_all()
         combo_instancia.connect('changed', self.dinamizar)
         combo_equipo.connect('changed', self.dinamizar)
 
@@ -112,7 +116,19 @@ class MostrarFixture(Interfaz):
                                                       partida.nombre_visitante, partida.ganador, partida.id])
 
     def ver_detalle(self, widget):
-        pass
+        model = self.treeview.get_model()
+        cursor, _ = self.treeview.get_cursor()
+        resultado = model.get_value(model.get_iter(cursor), 3)
+        if resultado == 'Sin jugar':
+            self.mostrar_error('No hay resultado cargado para esta partida.')
+            return
+        opc = {'porpuntuacion': MostrarResultadoPuntos, 'porsets': MostrarResultadoSets}
+        id_partida = model.get_value(model.get_iter(cursor), 4)
+        dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
+        if dto_partida_seleccionada.tipo_puntuacion == 'porresultadofinal':
+            self.mostrar_error('No corresponde mostrar detalle para este tipo de puntuacion.')
+            return
+        n = opc[dto_partida_seleccionada.tipo_puntuacion](id_partida)
 
     def gestionar_resultado(self, widget):
         opc = {'porresultadofinal': GestionarFinal, 'porpuntuacion': GestionarPuntos, 'porsets': GestionarSets}
@@ -120,11 +136,11 @@ class MostrarFixture(Interfaz):
         cursor, _ = self.treeview.get_cursor()
         id_partida = model.get_value(model.get_iter(cursor), 4)
         dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
-        n = opc[dto_partida_seleccionada.tipo_puntuacion](id_partida, self.main_window)
+        n = opc[dto_partida_seleccionada.tipo_puntuacion](id_partida, self)
         self.main_window.hide()
 
     def destroy(self, widget):
-        self.volver(None)
+        gtk.main_quit()
 
     def volver(self, widget):
         self.main_window.hide()
@@ -132,9 +148,9 @@ class MostrarFixture(Interfaz):
 
 class GestionarFinal(Interfaz):
     """Interfaz para gestionar un resultado de tipo final"""
-    def __init__(self, id_partida, ventana_padre):
+    def __init__(self, id_partida, clase_padre):
         self.id_partida = id_partida
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button6').connect('clicked', self.volver)
@@ -195,13 +211,14 @@ class GestionarFinal(Interfaz):
 
     def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.main_window.show()
+        self.clase_padre.actualizar()
 
 class GestionarPuntos(Interfaz):
     """Interfaz para gestionar un resultado de tipo puntos"""
-    def __init__(self, id_partida, ventana_padre):
+    def __init__(self, id_partida, clase_padre):
         self.id_partida = id_partida
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button10').connect('clicked', self.volver)
@@ -230,7 +247,8 @@ class GestionarPuntos(Interfaz):
 
     def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.main_window.show()
+        self.clase_padre.actualizar()
 
     def aceptar(self, widget):
         local = int(self.glade.get_object('spinbutton1').get_value())
@@ -259,9 +277,9 @@ class GestionarPuntos(Interfaz):
 
 class GestionarSets(Interfaz):
     """Interfaz para gestionar un resultado de tipo sets"""
-    def __init__(self, id_partida, ventana_padre):
+    def __init__(self, id_partida, clase_padre):
         self.id_partida = id_partida
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button8').connect('clicked', self.volver)
@@ -301,12 +319,13 @@ class GestionarSets(Interfaz):
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
-    def destroy(self, widget):
-        self.volver(None)
-
     def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.main_window.show()
+        self.clase_padre.actualizar()
+
+    def destroy(self, widget):
+        gtk.main_quit()
 
     def aceptar(self, widget):
         mensajes_error = []
@@ -432,8 +451,6 @@ class MostrarTablaPosiciones:
                 dto.goles_a_favor, dto.goles_en_contra, dto.goles_a_favor-dto.goles_en_contra,
                 dto.partidos_empatados+dto.partidos_ganados+dto.partidos_perdidos
             ]
-            for i, dato in enumerate(datos):
-                datos[i] = str(dato)
             self.treeview.get_model().append(datos)
 
         self.main_window = self.glade.get_object('tabla_posiciones')

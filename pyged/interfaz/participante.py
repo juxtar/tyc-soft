@@ -2,6 +2,7 @@ import pygtk
 pygtk.require("2.0")
 import gtk
 import gtk.glade
+from os import path
 from main import agregar_cuadro_error,Interfaz
 from pyged.gestores.gestorparticipante import GestorParticipante
 from pyged.gestores.dtos import DTOParticipante
@@ -10,13 +11,14 @@ from pyged.gestores.excepciones import NombreExistente, FaltaDeDatos
 
 class NuevoParticipante(Interfaz):
     """Interfaz para crear un nuevo participante"""
-    def __init__(self, id_competencia, ventana_padre):
+    def __init__(self, id_competencia, clase_padre):
         self.id_competencia = id_competencia
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file('glade\participante.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\participante.glade')
         self.main_window = self.glade.get_object('nuevo_participante')
         self.glade.get_object('button5').connect('clicked', self.aceptar)
+        self.glade.get_object('button6').connect('clicked', self.volver)
         self.glade.get_object('filechooserbutton1').connect('file-set', self.imagen_seleccionada)
         filtro_imagen = gtk.FileFilter()
         filtro_imagen.set_name("Imagenes")
@@ -56,18 +58,18 @@ class NuevoParticipante(Interfaz):
                 self.mostrar_error(f.mensaje)
 
     def destroy(self, widget):
-        self.cancelar(None)
+        gtk.main_quit()
 
-    def cancelar(self, widget):
+    def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.listar_participantes()
+        self.clase_padre.main_window.show()
 
     def validar_nombre(self, nombre):
         for letra in nombre:
             if not (letra.isalnum() or letra.isspace()):
                 self.mostrar_error('Nombre incorrecto, solo puede contener letras, numeros y espacios.')
                 return False
-                break
         else:
             return True
 
@@ -91,22 +93,35 @@ class NuevoParticipante(Interfaz):
 
 class VerParticipantes(Interfaz):
     """Interfaz para ver los participantes de una competencia"""
-    def __init__(self, id_competencia):
+    def __init__(self, id_competencia, ventana_padre):
         self.id_competencia = id_competencia
+        self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file('glade\participante.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\participante.glade')
         self.main_window = self.glade.get_object('ver_participantes')
         self.glade.get_object('button4').connect('clicked', self.volver)
+        self.glade.get_object('button1').connect('clicked', self.nuevo_participante)
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
-        lista_participantes = GestorParticipante().get_instance().listar_participantes(id_competencia)
+        self.listar_participantes()
+
+    def listar_participantes(self):
+        lista_participantes = GestorParticipante().get_instance().listar_participantes(id_competencia=self.id_competencia)
         modelo = self.glade.get_object('treeview1').get_model()
         modelo.clear()
         for participante in lista_participantes:
             modelo.append([participante.nombre, participante.correo_electronico])
 
+    def nuevo_participante(self, widget):
+        n = NuevoParticipante(self.id_competencia, self)
+        self.main_window.hide()
+
+    def destroy(self, widget):
+        gtk.main_quit()
+
     def volver(self, widget):
-        pass
+        self.main_window.hide()
+        self.ventana_padre.show()

@@ -10,7 +10,7 @@ class GestorLugar(Singleton):
 
     def listar_lugar(self, id_usuario = None, id_lugar = None):
         if id_lugar is not None:
-           return GestorBaseDeDatos.get_instance().listar_lugar(id_lugar=id_lugar)
+            return GestorBaseDeDatos.get_instance().listar_lugar(id_lugar=id_lugar)
         if id_usuario is not None:
             lista_dto = []
             lista_lugares = GestorBaseDeDatos.get_instance().listar_lugar(id_usuario= id_usuario)

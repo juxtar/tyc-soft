@@ -2,6 +2,22 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name Nombre -->
+      <column type="gchararray"/>
+      <!-- column-name Deporte -->
+      <column type="gchararray"/>
+      <!-- column-name Modalidad -->
+      <column type="gchararray"/>
+      <!-- column-name Estado -->
+      <column type="gchararray"/>
+      <!-- column-name Creador -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="gint"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="listaDeporte">
     <columns>
       <!-- column-name Deporte -->
@@ -67,20 +83,6 @@
         <col id="0" translatable="yes">Eliminatoria Doble</col>
       </row>
     </data>
-  </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name Nombre -->
-      <column type="gchararray"/>
-      <!-- column-name Deporte -->
-      <column type="gchararray"/>
-      <!-- column-name Modalidad -->
-      <column type="gchararray"/>
-      <!-- column-name Estado -->
-      <column type="gchararray"/>
-      <!-- column-name Creador -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkWindow" id="listar_competencia">
     <property name="width_request">600</property>

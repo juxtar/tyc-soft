@@ -124,15 +124,14 @@ class GestorCompetencia(Singleton):
 
     def generar_tabla_posiciones(self, id_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
-        lista_participantes= competencia.participantes
         presentarse = competencia.puntos_por_presentarse
         ganar = competencia.puntos_por_ganar
         empate = competencia.puntos_por_empate
         lista_dtos = []
         lista_partidas = competencia.partidas[:]
-        for participante in lista_participantes:
+        for participante in competencia.participantes:
             for partida in lista_partidas:
-                if not(partida.participante_local == participante.id or partida.participante_visitante == participante.id):
+                if not(partida.participante_local == participante or partida.participante_visitante == participante):
                     lista_partidas.remove(partida)
             puntos = 0
             goles_a_favor = 0
@@ -142,113 +141,115 @@ class GestorCompetencia(Singleton):
             partidos_empatados = 0
             tipo = None
             nombre_dummy = 'Dummy' + competencia.nombre
-            if participante.nombre != nombre_dummy:
-                for partida in lista_partidas:
-                    if partida.estado == 'Finalizada':
-                        dto = None
-                        if partida.resultado.tipo == 'porpuntuacion':
-                            puntos += presentarse
-                            tipo = 'porpuntuacion'
-                            if partida.id_participante_local == participante.id:
-                                if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
-                                    puntos += ganar
-                                    partidos_ganados += 1
-                                    goles_a_favor += partida.resultado.puntos_de_local
-                                    goles_en_contra += partida.resultado.puntos_de_visitante
-                                elif partida.resultado.puntos_de_local < partida.resultado.puntos_de_visitante:
-                                    partidos_perdidos += 1
-                                    goles_a_favor += partida.resultado.puntos_de_local
-                                    goles_en_contra += partida.resultado.puntos_de_visitante
-                                else:
-                                    puntos += empate
-                                    partidos_empatados += 1
-                                    goles_a_favor += partida.resultado.puntos_de_local
-                                    goles_en_contra += partida.resultado.puntos_de_visitante
-                            if partida.id_participante_visitante == participante.id:
-                                if partida.resultado.puntos_de_visitante > partida.resultado.puntos_de_local:
-                                    puntos += ganar
-                                    partidos_ganados += 1
-                                    goles_a_favor += partida.resultado.puntos_de_visitante
-                                    goles_en_contra += partida.resultado.puntos_de_local
-                                elif partida.resultado.puntos_de_visitante < partida.resultado.puntos_de_local:
-                                    partidos_perdidos += 1
-                                    goles_a_favor += partida.resultado.puntos_de_visitante
-                                    goles_en_contra += partida.resultado.puntos_de_local
-                                else:
-                                    puntos += empate
-                                    partidos_empatados += 1
-                                    goles_a_favor += partida.resultado.puntos_de_visitante
-                                    goles_en_contra += partida.resultado.puntos_de_local
-                        if partida.resultado.tipo == 'porresultadofinal':
-                            puntos = puntos + presentarse
-                            tipo = 'porresultadofinal'
-                            if partida.id_participante_local == participante.id:
-                                if partida.resultado.puntos_de_local == 1:
-                                    puntos += ganar
-                                    partidos_ganados += 1
-                                elif partida.resultado.puntos_de_local == 0.5:
-                                    partidos_empatados += 1
-                                    puntos += empate
-                                else:
-                                    partidos_perdidos += 1
-                            if partida.id_participante_visitante == participante.id:
-                                if partida.resultado.puntos_de_visitante == 1:
-                                    partidos_ganados += 1
-                                    puntos += ganar
-                                elif partida.resultado.puntos_de_visitante == 0.5:
-                                    partidos_empatados += 1
-                                    puntos += empate
-                                else:
-                                    partidos_perdidos += 1
-                        if partida.resultado.tipo == 'porsets':
-                            puntos += presentarse
-                            tipo = 'porsets'
-                            if partida.id_participante_local == participante.id:
-                                lista_sets = partida.resultado.sets
-                                ganador_local = 0
-                                ganador_visitante = 0
-                                for sets in lista_sets:
-                                    if sets.puntaje_de_local > sets.puntaje_de_visitante:
-                                        ganador_local += 1
-                                        goles_a_favor += sets.puntaje_de_local
-                                        goles_en_contra += sets.puntaje_de_visitante
-                                    if sets.puntaje_de_local < sets.puntaje_de_visitante:
-                                        ganador_visitante += 1
-                                        goles_a_favor += sets.puntaje_de_local
-                                        goles_en_contra += sets.puntaje_de_visitante
-                                if ganador_local > ganador_visitante:
-                                    puntos += ganar
-                                    partidos_ganados += 1
-                                else:
-                                    partidos_perdidos += + 1
-                            if partida.id_participante_visitante == participante.id:
-                                lista_sets = partida.resultado.sets
-                                ganador_local = 0
-                                ganador_visitante = 0
-                                for sets in lista_sets:
-                                    if sets.puntaje_de_local > sets.puntaje_de_visitante:
-                                        ganador_local += 1
-                                        goles_a_favor += sets.puntaje_de_visitante
-                                        goles_en_contra += sets.puntaje_de_local
-                                    if sets.puntaje_de_local < sets.puntaje_de_visitante:
-                                        ganador_visitante += 1
-                                        goles_a_favor += sets.puntaje_de_visitante
-                                        goles_en_contra += sets.puntaje_de_local
-                                if ganador_local < ganador_visitante:
-                                    puntos += ganar
-                                    partidos_ganados += 1
-                                else:
-                                    partidos_perdidos += 1
-                if tipo == 'porpuntuacion':
-                    dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
-                                           partidos_perdidos, goles_a_favor, goles_en_contra)
-                elif tipo == 'porresultadofinal':
-                    dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
-                                           partidos_perdidos, goles_a_favor, goles_en_contra)
-                elif tipo == 'porsets':
-                    dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, None, partidos_perdidos,
-                                           goles_a_favor, goles_en_contra)
-                lista_dtos.append(dto)
+            if participante.nombre == nombre_dummy:
+                continue
+            dto = None
+            for partida in lista_partidas:
+                if partida.estado != 'Finalizada':
+                    continue
+                if partida.resultado.tipo == 'porpuntuacion':
+                    tipo = 'porpuntuacion'
+                    puntos += presentarse
+                    if partida.participante_local == participante:
+                        if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
+                            puntos += ganar
+                            partidos_ganados += 1
+                            goles_a_favor += partida.resultado.puntos_de_local
+                            goles_en_contra += partida.resultado.puntos_de_visitante
+                        elif partida.resultado.puntos_de_local < partida.resultado.puntos_de_visitante:
+                            partidos_perdidos += 1
+                            goles_a_favor += partida.resultado.puntos_de_local
+                            goles_en_contra += partida.resultado.puntos_de_visitante
+                        else:
+                            puntos += empate
+                            partidos_empatados += 1
+                            goles_a_favor += partida.resultado.puntos_de_local
+                            goles_en_contra += partida.resultado.puntos_de_visitante
+                    if partida.participante_visitante == participante:
+                        if partida.resultado.puntos_de_visitante > partida.resultado.puntos_de_local:
+                            puntos += ganar
+                            partidos_ganados += 1
+                            goles_a_favor += partida.resultado.puntos_de_visitante
+                            goles_en_contra += partida.resultado.puntos_de_local
+                        elif partida.resultado.puntos_de_visitante < partida.resultado.puntos_de_local:
+                            partidos_perdidos += 1
+                            goles_a_favor += partida.resultado.puntos_de_visitante
+                            goles_en_contra += partida.resultado.puntos_de_local
+                        else:
+                            puntos += empate
+                            partidos_empatados += 1
+                            goles_a_favor += partida.resultado.puntos_de_visitante
+                            goles_en_contra += partida.resultado.puntos_de_local
+                if partida.resultado.tipo == 'porresultadofinal':
+                    tipo = 'porresultadofinal'
+                    puntos = puntos + presentarse
+                    if partida.participante_local == participante:
+                        if partida.resultado.puntos_de_local == 1:
+                            puntos += ganar
+                            partidos_ganados += 1
+                        elif partida.resultado.puntos_de_local == 0.5:
+                            partidos_empatados += 1
+                            puntos += empate
+                        else:
+                            partidos_perdidos += 1
+                    if partida.participante_visitante == participante:
+                        if partida.resultado.puntos_de_visitante == 1:
+                            partidos_ganados += 1
+                            puntos += ganar
+                        elif partida.resultado.puntos_de_visitante == 0.5:
+                            partidos_empatados += 1
+                            puntos += empate
+                        else:
+                            partidos_perdidos += 1
+                if partida.resultado.tipo == 'porsets':
+                    tipo = 'porsets'
+                    puntos += presentarse
+                    if partida.participante_local == participante:
+                        lista_sets = partida.resultado.sets
+                        ganador_local = 0
+                        ganador_visitante = 0
+                        for sets in lista_sets:
+                            if sets.puntaje_de_local > sets.puntaje_de_visitante:
+                                ganador_local += 1
+                                goles_a_favor += sets.puntaje_de_local
+                                goles_en_contra += sets.puntaje_de_visitante
+                            if sets.puntaje_de_local < sets.puntaje_de_visitante:
+                                ganador_visitante += 1
+                                goles_a_favor += sets.puntaje_de_local
+                                goles_en_contra += sets.puntaje_de_visitante
+                        if ganador_local > ganador_visitante:
+                            puntos += ganar
+                            partidos_ganados += 1
+                        else:
+                            partidos_perdidos += + 1
+                    if partida.participante_visitante == participante:
+                        lista_sets = partida.resultado.sets
+                        ganador_local = 0
+                        ganador_visitante = 0
+                        for sets in lista_sets:
+                            if sets.puntaje_de_local > sets.puntaje_de_visitante:
+                                ganador_local += 1
+                                goles_a_favor += sets.puntaje_de_visitante
+                                goles_en_contra += sets.puntaje_de_local
+                            if sets.puntaje_de_local < sets.puntaje_de_visitante:
+                                ganador_visitante += 1
+                                goles_a_favor += sets.puntaje_de_visitante
+                                goles_en_contra += sets.puntaje_de_local
+                        if ganador_local < ganador_visitante:
+                            puntos += ganar
+                            partidos_ganados += 1
+                        else:
+                            partidos_perdidos += 1
+            if tipo == 'porpuntuacion':
+                dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
+                               partidos_perdidos, goles_a_favor, goles_en_contra)
+            if tipo == 'porresultadofinal':
+                dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
+                               partidos_perdidos, goles_a_favor, goles_en_contra)
+            if tipo == 'porsets':
+                dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, None, partidos_perdidos,
+                               goles_a_favor, goles_en_contra)
+            lista_dtos.append(dto)
         return lista_dtos
 
     def eliminar_fixture(self, id_competencia):
