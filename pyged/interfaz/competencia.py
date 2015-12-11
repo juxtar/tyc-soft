@@ -55,6 +55,8 @@ class VerCompetencia(Interfaz):
         self.glade.get_object('estado').set_text(datos_competencia.estado)
         self.estado_competencia = datos_competencia.estado
         self.tipo_competencia = datos_competencia.tipo
+        if self.tipo_competencia != 'liga':
+            self.glade.get_object('button7').set_sensitive(False)
 
         lista_de_partidas = GestorPartida.get_instance().listar_partidas(id_competencia = self.id_competencia)
         self.glade.get_object("treeview2").get_model().clear()
