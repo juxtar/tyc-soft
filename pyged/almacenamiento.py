@@ -198,7 +198,8 @@ class Participante(Base):
     nombre = Column(String, nullable=False)
     correo_electronico = Column(String, nullable=False)
     id_competencia = Column(Integer, ForeignKey('competencia.id'))
-    historial_nombres = relationship("HistorialNombres")
+    historial_nombres = relationship("HistorialNombres",
+                                     cascade="save-update, merge, delete")
 
     def __repr__(self):
         return '<Participante(%r, %r)>' % (self.nombre, self.correo_electronico)

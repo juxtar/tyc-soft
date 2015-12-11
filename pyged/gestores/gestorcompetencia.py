@@ -92,15 +92,15 @@ class GestorCompetencia(Singleton):
 
     def generar_fixture(self, id_competencia):
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
+        if len(competencia.partidas) > 0:
+            GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
+            competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
         competencia.estado = 'Planificada'
         lista_participantes = competencia.participantes[:]
         if len(lista_participantes) < 2:
             raise FaltaDeDatos('No hay suficientes participantes en la competencia.')
-        cantidad_de_partidas = len(competencia.partidas)
         cantidad_de_participantes = len(lista_participantes)
         nombre_dummy = "Dummy" + competencia.nombre
-        if cantidad_de_partidas > 0:
-            GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
         if (cantidad_de_participantes % 2) == 1:
             dummy  = Participante(nombre= nombre_dummy, correo_electronico = nombre_dummy,
                                   id_competencia = competencia.id)
@@ -190,19 +190,19 @@ class GestorCompetencia(Singleton):
                     tipo = 'porresultadofinal'
                     puntos = puntos + presentarse
                     if partida.participante_local == participante:
-                        if partida.resultado.puntos_de_local == 1:
+                        if partida.resultado.resultado_de_local == 1:
                             puntos += ganar
                             partidos_ganados += 1
-                        elif partida.resultado.puntos_de_local == 0.5:
+                        elif partida.resultado.resultado_de_local == 0.5:
                             partidos_empatados += 1
                             puntos += empate
                         else:
                             partidos_perdidos += 1
                     if partida.participante_visitante == participante:
-                        if partida.resultado.puntos_de_visitante == 1:
+                        if partida.resultado.resultado_de_visitante == 1:
                             partidos_ganados += 1
                             puntos += ganar
-                        elif partida.resultado.puntos_de_visitante == 0.5:
+                        elif partida.resultado.resultado_de_visitante == 0.5:
                             partidos_empatados += 1
                             puntos += empate
                         else:
@@ -261,7 +261,15 @@ class GestorCompetencia(Singleton):
         return lista_dtos
 
     def eliminar_fixture(self, id_competencia):
+        from gestorparticipante import GestorParticipante
+
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
+        for participante in competencia.participantes:
+            nombre_dummy = 'Dummy' + competencia.nombre
+            if participante.nombre == nombre_dummy:
+                competencia.participantes.remove(participante)
+                GestorParticipante.get_instance().eliminar_participante(participante)
+                break
         for partida in competencia.partidas:
             GestorBaseDeDatos.get_instance().eliminar_partida(partida)
 

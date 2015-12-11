@@ -118,6 +118,8 @@ class VerParticipantes(Interfaz):
         modelo = self.glade.get_object('treeview1').get_model()
         modelo.clear()
         for participante in lista_participantes:
+            if 'Dummy' in participante.nombre:
+                continue
             modelo.append([participante.nombre, participante.correo_electronico])
 
     def nuevo_participante(self, widget):
