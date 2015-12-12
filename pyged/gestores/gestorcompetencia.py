@@ -99,13 +99,23 @@ class GestorCompetencia(Singleton):
         lista_participantes = competencia.participantes[:]
         if len(lista_participantes) < 2:
             raise FaltaDeDatos('No hay suficientes participantes en la competencia.')
+        sedes = competencia.sedes
         cantidad_de_participantes = len(lista_participantes)
+        disponibilidad= 0
+        for lugar in sedes:
+            disponibilidad += lugar.disponibilidad
+        if (cantidad_de_participantes/2) > disponibilidad:
+            print cantidad_de_participantes
+            print disponibilidad
+            raise FaltaDeDatos('No hay suficiente disponibilidad para generar el fixture')
         nombre_dummy = "Dummy" + competencia.nombre
         if (cantidad_de_participantes % 2) == 1:
             dummy  = Participante(nombre= nombre_dummy, correo_electronico = nombre_dummy,
                                   id_competencia = competencia.id)
             lista_participantes.append(dummy)
             cantidad_de_participantes = len(lista_participantes)
+        for lugar in sedes:
+            disponibilidad += lugar.disponibilidad
         for fecha in range(cantidad_de_participantes - 1):
             for partida in range(cantidad_de_participantes/2):
                 if lista_participantes[partida].nombre == nombre_dummy:
@@ -155,8 +165,8 @@ class GestorCompetencia(Singleton):
                     continue
                 if partida.resultado.tipo == 'porpuntuacion':
                     tipo = 'porpuntuacion'
-                    puntos += presentarse
-                    if partida.participante_local == participante:
+                    if partida.participante_local == participante and partida.local_presente:
+                        puntos += presentarse
                         if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
                             puntos += ganar
                             partidos_ganados += 1
@@ -171,7 +181,8 @@ class GestorCompetencia(Singleton):
                             partidos_empatados += 1
                             goles_a_favor += partida.resultado.puntos_de_local
                             goles_en_contra += partida.resultado.puntos_de_visitante
-                    if partida.participante_visitante == participante:
+                    if partida.participante_visitante == participante and partida.visitante_presente:
+                        puntos += presentarse
                         if partida.resultado.puntos_de_visitante > partida.resultado.puntos_de_local:
                             puntos += ganar
                             partidos_ganados += 1
@@ -188,8 +199,8 @@ class GestorCompetencia(Singleton):
                             goles_en_contra += partida.resultado.puntos_de_local
                 if partida.resultado.tipo == 'porresultadofinal':
                     tipo = 'porresultadofinal'
-                    puntos = puntos + presentarse
-                    if partida.participante_local == participante:
+                    if partida.participante_local == participante and partida.local_presente:
+                        puntos += presentarse
                         if partida.resultado.resultado_de_local == 1:
                             puntos += ganar
                             partidos_ganados += 1
@@ -198,7 +209,8 @@ class GestorCompetencia(Singleton):
                             puntos += empate
                         else:
                             partidos_perdidos += 1
-                    if partida.participante_visitante == participante:
+                    if partida.participante_visitante == participante and partida.visitante_presente:
+                        puntos += presentarse
                         if partida.resultado.resultado_de_visitante == 1:
                             partidos_ganados += 1
                             puntos += ganar
@@ -209,8 +221,8 @@ class GestorCompetencia(Singleton):
                             partidos_perdidos += 1
                 if partida.resultado.tipo == 'porsets':
                     tipo = 'porsets'
-                    puntos += presentarse
-                    if partida.participante_local == participante:
+                    if partida.participante_local == participante and partida.local_presente:
+                        puntos += presentarse
                         lista_sets = partida.resultado.sets
                         ganador_local = 0
                         ganador_visitante = 0
@@ -228,7 +240,8 @@ class GestorCompetencia(Singleton):
                             partidos_ganados += 1
                         else:
                             partidos_perdidos += + 1
-                    if partida.participante_visitante == participante:
+                    if partida.participante_visitante == participante and partida.visitante_presente:
+                        puntos += presentarse
                         lista_sets = partida.resultado.sets
                         ganador_local = 0
                         ganador_visitante = 0
