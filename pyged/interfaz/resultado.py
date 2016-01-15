@@ -323,6 +323,11 @@ class GestionarSets(Interfaz):
                 widget.set_sensitive(i<datos_partida.cantidad_de_sets)
             widgets['local'].connect('changed', self.dinamizar)
             widgets['visitante'].connect('changed', self.dinamizar)
+        focus_list = []
+        for entry in self.lista_widgets:
+            focus_list.append(entry['local'])
+            focus_list.append(entry['visitante'])
+        self.glade.get_object('table4').set_focus_chain(focus_list)
 
         if datos_partida.estado == 'Finalizada':
             datos_resultado = GestorPartida.get_instance().listar_resultado(id_partida)
