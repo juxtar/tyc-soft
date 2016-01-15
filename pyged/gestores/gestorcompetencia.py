@@ -292,3 +292,20 @@ class GestorCompetencia(Singleton):
         for d in deportes:
             lista_deportes.append(d.nombre)
         return lista_deportes
+
+    def agregar_participante(self, id_competencia, participante):
+        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
+        if competencia.estado in ['En Disputa', 'Finalizada']:
+            raise FaltaDeDatos('No se puede agregar participante a una competencia a la que ya se le agregaron resultados.')
+        for parts in competencia.participantes:
+            if parts.nombre == participante.nombre:
+                raise NombreExistente('Este participante ya existe en esta competencia.')
+            if parts.correo_electronico == participante.correo_electronico:
+                raise NombreExistente('Este correo electronico ya existe en esta competencia.')
+        if competencia.partidas is not None:
+            GestorCompetencia.get_instance().eliminar_fixture(id_competencia = competencia.id)
+        competencia.participantes.append(participante)
+        competencia.estado = 'Creada'
+        GestorBaseDeDatos.get_instance().modificar_competencia()
+
+
