@@ -68,7 +68,14 @@ class GestorPartida(Singleton):
                     lista_de_sets.append(new_set)
             resultado_new = ResultadoPorSet(fecha = datetime.now().date(), sets = lista_de_sets)
         elif dto.tipo == 'porresultadofinal':
-            resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = dto.resultado_local,
+            if not dto.local_presente:
+                resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = 0,
+                resultado_de_visitante = 1)
+            elif not dto.visitante_presente:
+                resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = 1,
+                resultado_de_visitante = 0)
+            else:
+                resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = dto.resultado_local,
                 resultado_de_visitante = dto.resultado_visitante)
         elif dto.tipo == 'porpuntuacion':
             dto_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=partida.id_competencia)[0]
