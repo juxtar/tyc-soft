@@ -48,13 +48,24 @@ class GestorPartida(Singleton):
                                partida.resultado.puntos_de_local, partida.resultado.puntos_de_visitante, None)
     def agregar_resultado(self, dto):
         partida = GestorBaseDeDatos.get_instance().listar_partidas(id_partida = dto.id_partida)
+        competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia = partida.id_competencia)
+        cantidad_de_sets = competencia[0].cantidad_de_sets
         resultado_new = None
         if dto.tipo == 'porsets':
             lista_de_sets = []
-            for dtoset in dto.lista_dto_sets:
-                new_set = Set( puntaje_de_local = dtoset.puntaje_local, puntaje_de_visitante = dtoset.puntaje_visitante,
-                          numero = dtoset.numero_de_set)
-                lista_de_sets.append(new_set)
+            if not dto.local_presente:
+                for sets in range((cantidad_de_sets/2)+1):
+                    new_set = Set( puntaje_de_local = 0, puntaje_de_visitante = 6, numero = sets+1)
+                    lista_de_sets.append(new_set)
+            elif not dto.visitante_presente:
+                for sets in range((cantidad_de_sets/2)+1):
+                    new_set = Set( puntaje_de_local = 6, puntaje_de_visitante = 0, numero = sets+1)
+                    lista_de_sets.append(new_set)
+            else:
+                for dtoset in dto.lista_dto_sets:
+                    new_set = Set( puntaje_de_local = dtoset.puntaje_local, puntaje_de_visitante = dtoset.puntaje_visitante,
+                    numero = dtoset.numero_de_set)
+                    lista_de_sets.append(new_set)
             resultado_new = ResultadoPorSet(fecha = datetime.now().date(), sets = lista_de_sets)
         elif dto.tipo == 'porresultadofinal':
             resultado_new = ResultadoPorResultadoFinal(fecha = datetime.now().date(), resultado_de_local = dto.resultado_local,
