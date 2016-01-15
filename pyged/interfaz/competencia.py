@@ -12,6 +12,7 @@ from main import agregar_cuadro_error, Interfaz
 from aviso import Exito
 from resultado import MostrarTablaPosiciones, MostrarFixture
 from participante import VerParticipantes
+import re
 
 def obtener_descendientes(widget, tipo):
     """Busca descendientes del widget del tipo especificado"""
@@ -206,6 +207,7 @@ class NuevaCompetencia(Interfaz):
         lista_lugares = GestorLugar.get_instance().listar_lugar(id_usuario)
         for lugar in lista_lugares:
             cuadrolugar = CuadroLugar(lugar.id, lugar.nombre)
+            cuadrolugar.disponibilidad.connect('changed', self.dinamizar)
             self.glade.get_object('lugares').pack_start(cuadrolugar, False, True, 2)
             cuadrolugar.show_all()
 
@@ -234,9 +236,13 @@ class NuevaCompetencia(Interfaz):
         elif nombre == 'porsets':
             cantidad_sets = self.glade.get_object('cantSets0')
             if widget.get_active():
+                self.glade.get_object('viewport4').set_sensitive(False)
                 cantidad_sets.show()
             else:
                 cantidad_sets.hide()
+                self.glade.get_object('viewport4').set_sensitive(self.glade.get_object('empate').get_active())
+            self.glade.get_object('empate').set_sensitive(not widget.get_active())
+
         elif nombre == 'porpuntuacion':
             presentismo = self.glade.get_object('cantPunt0')
             if widget.get_active():
@@ -245,23 +251,54 @@ class NuevaCompetencia(Interfaz):
                 presentismo.hide()
         elif nombre == 'entry2':
             texto = widget.get_text().upper()
+            widget.set_text(texto[:100])
+        elif nombre is None:
+            texto = widget.get_text()
+            texto = filter(str.isdigit, texto)
+            if len(texto) > 2:
+                texto = texto[:2]
             widget.set_text(texto)
 
     def aceptar(self, widget):
         deporte_box = self.glade.get_object('comboDeporte1')
         deporte = deporte_box.get_model()[deporte_box.get_active()][0]
+
         nombre = self.glade.get_object('entry2').get_text()
 
         mensaje_errores = []
         if nombre == '':
             mensaje_errores.append('Debe ingresar un nombre para la competencia.')
-        if deporte == '':
+        if not re.match(r"^[A-Z0-9]+( [A-Z0-9]+)*$", nombre):
+            mensaje_errores.append('Nombre invalido. Solo puede contener letras, numeros y espacios.')
+        if deporte_box.get_active() == -1:
             mensaje_errores.append('Debe ingresar un deporte para la competencia.')
 
         for lugar in self.glade.get_object('lugares').get_children():
             if lugar.get_active():
                 if lugar.get_disponibilidad() == '':
                     mensaje_errores.append('Debe ingresar la disponibilidad para {}.'.format(lugar.get_label()))
+                if int(lugar.get_disponibilidad()) == 0:
+                    mensaje_errores.append('La disponibilidad de {} no puede ser 0.'.format(lugar.get_label()))
+
+        puntos_empate = self.glade.get_object('spinEmpate').get_value()
+        puntos_victoria = self.glade.get_object('spinbutton4').get_value()
+        puntos_presentarse = self.glade.get_object('spinbutton5').get_value()
+        permitir_empate = self.glade.get_object('empate').get_active()
+
+        if puntos_empate >= puntos_victoria and permitir_empate:
+            mensaje_errores.append('La cantidad de puntos por ganar debe ser mayor que la cantidad de puntos por empate.')
+        if puntos_presentarse > puntos_victoria:
+            mensaje_errores.append('La cantidad de puntos por presentarse no puede superar la de un partido ganado.')
+        if not puntos_victoria:
+            mensaje_errores.append('La cantidad de puntos por ganar no puede ser 0.')
+
+        datos_lugares = [
+            {'id_lugar':lugar.id, 'nombre':lugar.nombre, 'disponibilidad':lugar.get_disponibilidad(),
+             'descripcion':None}
+            for lugar in self.glade.get_object('lugares').get_children() if lugar.get_active()
+            ]
+        if not datos_lugares:
+            mensaje_errores.append('Debe seleccionar al menos un lugar para la competencia.')
 
         if mensaje_errores:
             self.mostrar_error(*mensaje_errores)
@@ -282,22 +319,14 @@ class NuevaCompetencia(Interfaz):
 
         cantidad_sets = self.glade.get_object('spinbutton1').get_value()
         tantos_presentismo = self.glade.get_object('spinbutton2').get_value()
-        permitir_empate = self.glade.get_object('empate').get_active()
-        puntos_empate = self.glade.get_object('spinEmpate').get_value()
-        puntos_victoria = self.glade.get_object('spinbutton4').get_value()
-        puntos_presentarse = self.glade.get_object('spinbutton5').get_value()
         text_buffer = self.glade.get_object("textview1").get_buffer()
         reglamento = text_buffer.get_text(text_buffer.get_start_iter(), text_buffer.get_end_iter())
-        datos_lugares = [
-                        {'id_lugar':lugar.id, 'nombre':lugar.nombre, 'disponibilidad':lugar.get_disponibilidad(),
-                         'descripcion':None}
-                        for lugar in self.glade.get_object('lugares').get_children() if lugar.get_active()
-                        ]
+
         lugares = [DTOLugar(**datos) for datos in datos_lugares]
 
         dto = DTOCompetencia(None, nombre, puntuacion, 'Creada', reglamento, self.id_usuario, None, modalidad,
-                            cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate, deporte,
-                            lugares, tantos_presentismo, permitir_empate)
+                             cantidad_sets, puntos_presentarse, puntos_victoria, puntos_empate, deporte,
+                             lugares, tantos_presentismo, permitir_empate)
 
         try:
             exito = GestorCompetencia.get_instance().nueva_competencia(dto)

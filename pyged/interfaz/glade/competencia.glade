@@ -1306,6 +1306,7 @@
                                 <property name="label" translatable="yes">Permitir Empate</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="draw_indicator">True</property>
@@ -1640,6 +1641,7 @@
   <object class="GtkAdjustment" id="sets">
     <property name="lower">1</property>
     <property name="upper">9</property>
+    <property name="value">1</property>
     <property name="step_increment">2</property>
     <property name="page_increment">10</property>
   </object>

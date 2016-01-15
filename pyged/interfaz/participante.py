@@ -9,6 +9,7 @@ from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.dtos import DTOParticipante
 from aviso import Exito
 from pyged.gestores.excepciones import NombreExistente, FaltaDeDatos
+import re
 
 class NuevoParticipante(Interfaz):
     """Interfaz para crear un nuevo participante"""
@@ -21,6 +22,8 @@ class NuevoParticipante(Interfaz):
         self.glade.get_object('button5').connect('clicked', self.aceptar)
         self.glade.get_object('button6').connect('clicked', self.volver)
         self.glade.get_object('filechooserbutton1').connect('file-set', self.imagen_seleccionada)
+        self.glade.get_object('entry1').connect('changed', self.dinamizar)
+        self.glade.get_object('entry2').connect('changed', self.dinamizar)
         filtro_imagen = gtk.FileFilter()
         filtro_imagen.set_name("Imagenes")
         filtro_imagen.add_mime_type("image/png")
@@ -77,21 +80,18 @@ class NuevoParticipante(Interfaz):
             return []
 
     def validar_email(self, email):
-        errores = []
-        caracteres = ['.','-','_']
-        if email.count('@') != 1:
-            return ['El correo electronico debe contener un @']
-        emailenlista = email.split('@')
-        for letra in emailenlista[0]:
-            if not (letra.isalnum() or letra in caracteres):
-                errores.append('Nombre de correo incorrecto, solo debe tener numeros, letras, puntos o guiones.')
-                break
-        for caracter in emailenlista[1]:
-            if not (caracter.isalnum() or caracter == '.'):
-                errores.append('Dominio del correo electronico incorrecto, solo debe tener letras, numeros y puntos.')
-                break
-        return errores
+        email_re = re.compile(
+            r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+            r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+            r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+        if email_re.match(email):
+            return []
+        else:
+            return ['Correo invalido.']
 
+    def dinamizar(self, widget):
+        texto = widget.get_text()
+        widget.set_text(texto[:100])
 
 class VerParticipantes(Interfaz):
     """Interfaz para ver los participantes de una competencia"""
