@@ -1,6 +1,7 @@
 from main import Singleton
 from excepciones import FaltaDeDatos, NombreExistente
 from gestorbasededatos import GestorBaseDeDatos
+from gestorcompetencia import GestorCompetencia
 from dtos import DTOParticipante
 from pyged.almacenamiento import *
 from datetime import *
@@ -17,20 +18,10 @@ class GestorParticipante(Singleton):
                 raise FaltaDeDatos('Debe escribir un nombre para este participante.')
         if dto.correo_electronico in [None, '']:
                 raise FaltaDeDatos('Debe escribir un correo electronico para este participante.')
-        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = dto.id_competencia)
-        if competencia.estado in ['En Disputa', 'Finalizada']:
-            raise FaltaDeDatos('No se puede agregar participante a una competencia a la que ya se le agregaron resultados.')
-        for participante in competencia.participantes:
-            if participante.nombre == dto.nombre:
-                raise NombreExistente('Este participante ya existe en esta competencia.')
-            if participante.correo_electronico == dto.correo_electronico:
-                raise NombreExistente('Este correo electronico ya existe en esta competencia.')
         part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
         historial = HistorialNombres(nombre = part.nombre, fecha = datetime.now().date(), id_participante = part.id)
         part.historial_nombres = [historial]
-        competencia.participantes.append(part)
-        competencia.estado = 'Creada'
-        GestorBaseDeDatos.get_instance().modificar_competencia()
+        GestorCompetencia.get_instance().agregar_participante(participante = part,id_competencia = dto.id_competencia)
         return 1
 
     def modificar_participante(self):
