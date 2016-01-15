@@ -277,6 +277,7 @@ class NuevaCompetencia(Interfaz):
             if lugar.get_active():
                 if lugar.get_disponibilidad() == '':
                     mensaje_errores.append('Debe ingresar la disponibilidad para {}.'.format(lugar.get_label()))
+                    continue
                 if int(lugar.get_disponibilidad()) == 0:
                     mensaje_errores.append('La disponibilidad de {} no puede ser 0.'.format(lugar.get_label()))
 
