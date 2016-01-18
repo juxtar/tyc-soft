@@ -95,9 +95,9 @@ class NuevoParticipante(Interfaz):
 
 class VerParticipantes(Interfaz):
     """Interfaz para ver los participantes de una competencia"""
-    def __init__(self, id_competencia, ventana_padre):
+    def __init__(self, id_competencia, clase_padre):
         self.id_competencia = id_competencia
-        self.ventana_padre = ventana_padre
+        self.clase_padre = clase_padre
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\participante.glade')
         self.main_window = self.glade.get_object('ver_participantes')
@@ -131,4 +131,5 @@ class VerParticipantes(Interfaz):
 
     def volver(self, widget):
         self.main_window.hide()
-        self.ventana_padre.show()
+        self.clase_padre.actualizar()
+

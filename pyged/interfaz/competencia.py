@@ -85,7 +85,7 @@ class VerCompetencia(Interfaz):
         self.ventana_padre.show()
 
     def ver_participantes(self, widget):
-        n = VerParticipantes(self.id_competencia, self.main_window)
+        n = VerParticipantes(self.id_competencia, self)
         self.main_window.hide()
 
     def mostrar_tabla(self, widget):
@@ -103,7 +103,8 @@ class VerCompetencia(Interfaz):
             if exito is 1:
                 self.estado_competencia = 'Planificada'
                 self.glade.get_object('estado').set_text('Planificada')
-                Exito(self)
+                Exito(self, False)
+                self.actualizar()
         except FaltaDeDatos as e:
             self.mostrar_error(e.mensaje)
 

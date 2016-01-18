@@ -7,8 +7,9 @@ from os import path
 
 class Exito:
     """Ventana que indica que la operacion fue realizada con exito"""
-    def __init__(self, clase_ventana_padre):
+    def __init__(self, clase_ventana_padre, volver=True):
         self.clase_ventana_padre = clase_ventana_padre
+        self.volver = volver
         self.glade = gtk.Builder()
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\aviso.glade')
         self.main_window = self.glade.get_object('exito')
@@ -19,4 +20,5 @@ class Exito:
 
     def destroy(self, widget):
         self.main_window.hide()
-        self.clase_ventana_padre.volver(None)
+        if self.volver:
+            self.clase_ventana_padre.volver(None)
