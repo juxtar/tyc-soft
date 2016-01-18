@@ -99,29 +99,22 @@ class MostrarFixture(Interfaz):
         self.handler_id_equipo = combo_equipo.connect('changed', self.dinamizar)
 
     def dinamizar(self, widget):
-        nombre = gtk.Buildable.get_name(widget)
-        if nombre == 'combobox1':
-            self.treeview.get_model().clear()
-            if widget.get_active():
-                for partida in self.lista_partidas:
-                    if 'Fecha '+str(partida.instancia) == widget.get_model()[widget.get_active()][0]:
-                        self.treeview.get_model().append(['Fecha '+str(partida.instancia), partida.nombre_local,
-                                                          partida.nombre_visitante, partida.ganador, partida.id])
-            else:
-                for partida in self.lista_partidas:
-                    self.treeview.get_model().append(['Fecha '+str(partida.instancia), partida.nombre_local,
-                                                      partida.nombre_visitante, partida.ganador, partida.id])
-        if nombre == 'combobox2':
-            self.treeview.get_model().clear()
-            if widget.get_active():
-                for partida in self.lista_partidas:
-                    if widget.get_model()[widget.get_active()][0] in [partida.nombre_local, partida.nombre_visitante]:
-                        self.treeview.get_model().append(['Fecha '+str(partida.instancia), partida.nombre_local,
-                                                          partida.nombre_visitante, partida.ganador, partida.id])
-            else:
-                for partida in self.lista_partidas:
-                    self.treeview.get_model().append(['Fecha '+str(partida.instancia), partida.nombre_local,
-                                                      partida.nombre_visitante, partida.ganador, partida.id])
+        combo_fecha = self.glade.get_object('combobox1')
+        combo_equipo = self.glade.get_object('combobox2')
+        partidas_a_mostrar = self.lista_partidas[:]
+        if combo_fecha.get_active():
+            instancia_a_mostrar = combo_fecha.get_model()[combo_fecha.get_active()][0]
+            partidas_a_mostrar = filter(lambda partida: 'Fecha '+str(partida.instancia) == instancia_a_mostrar,
+                                            partidas_a_mostrar)
+        if combo_equipo.get_active():
+            equipo_a_mostrar = combo_equipo.get_model()[combo_equipo.get_active()][0]
+            partidas_a_mostrar = filter(lambda partida: equipo_a_mostrar in [partida.nombre_local,
+                                                                             partida.nombre_visitante],
+                                            partidas_a_mostrar)
+        self.treeview.get_model().clear()
+        for partida in partidas_a_mostrar:
+            self.treeview.get_model().append(['Fecha '+str(partida.instancia), partida.nombre_local,
+                                              partida.nombre_visitante, partida.ganador, partida.id])
 
     def ver_detalle(self, widget):
         model = self.treeview.get_model()
