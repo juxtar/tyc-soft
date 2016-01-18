@@ -271,7 +271,31 @@ class GestorCompetencia(Singleton):
                 dto = DTOTabla(participante.id, participante.nombre, puntos,partidos_ganados, 0, partidos_perdidos,
                                goles_a_favor, goles_en_contra)
                 lista_dtos.append(dto)
+        GestorCompetencia.get_instance().ordenar_tabla(lista = lista_dtos)
         return lista_dtos
+
+
+    def ordenar_tabla(self, lista):
+        tamanio = len(lista)-1
+        for pasada in range(tamanio):
+            for posicion in range(tamanio):
+                if lista[posicion].puntos < lista[posicion +1].puntos:
+                    elemento = lista[posicion]
+                    lista[posicion] = lista[posicion+1]
+                    lista[posicion+1]= elemento
+                elif lista[posicion].puntos == lista[posicion +1].puntos:
+                    diferencia1 = lista[posicion].goles_a_favor - lista[posicion].goles_en_contra
+                    diferencia2 = lista[posicion+1].goles_a_favor - lista[posicion+1].goles_en_contra
+                    if diferencia1 < diferencia2:
+                        elemento = lista[posicion]
+                        lista[posicion] = lista[posicion+1]
+                        lista[posicion+1]= elemento
+                    elif diferencia1 == diferencia2:
+                        if lista[posicion].goles_a_favor < lista[posicion+1].goles_a_favor:
+                            elemento = lista[posicion]
+                            lista[posicion] = lista[posicion+1]
+                            lista[posicion+1]= elemento
+
 
     def eliminar_fixture(self, id_competencia):
         from gestorparticipante import GestorParticipante
