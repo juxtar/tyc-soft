@@ -173,6 +173,8 @@ class GestionarFinal(Interfaz):
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button6').connect('clicked', self.volver)
         self.glade.get_object('button7').connect('clicked', self.aceptar)
+        self.glade.get_object('checkbutton1').connect('toggled', self.dinamizar)
+        self.glade.get_object('checkbutton2').connect('toggled', self.dinamizar)
 
         datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('label38').set_text(datos_partida.nombre_local)
@@ -232,6 +234,13 @@ class GestionarFinal(Interfaz):
         self.clase_padre.main_window.show()
         self.clase_padre.actualizar()
 
+    def dinamizar(self, widget):
+        local_presente = self.glade.get_object('checkbutton1').get_active()
+        visitante_presente = self.glade.get_object('checkbutton2').get_active()
+        botones = [self.glade.get_object(n) for n in ['radiobutton1', 'radiobutton2','radiobutton3']]
+        for boton in botones:
+            boton.set_sensitive(local_presente and visitante_presente)
+
 class GestionarPuntos(Interfaz):
     """Interfaz para gestionar un resultado de tipo puntos"""
     def __init__(self, id_partida, clase_padre):
@@ -244,7 +253,9 @@ class GestionarPuntos(Interfaz):
 
         datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('checkbutton5').set_label(datos_partida.nombre_local)
+        self.glade.get_object('checkbutton5').connect('toggled', self.dinamizar)
         self.glade.get_object('checkbutton6').set_label(datos_partida.nombre_visitante)
+        self.glade.get_object('checkbutton6').connect('toggled', self.dinamizar)
         self.permitir_empate = datos_partida.permitir_empate
 
         if datos_partida.estado == 'Finalizada':
@@ -293,6 +304,12 @@ class GestionarPuntos(Interfaz):
         if exito is 1:
             Exito(self)
 
+    def dinamizar(self, widget):
+        local_presente = self.glade.get_object('checkbutton5').get_active()
+        visitante_presente = self.glade.get_object('checkbutton6').get_active()
+        self.glade.get_object('spinbutton1').set_sensitive(local_presente and visitante_presente)
+        self.glade.get_object('spinbutton2').set_sensitive(local_presente and visitante_presente)
+
 class GestionarSets(Interfaz):
     """Interfaz para gestionar un resultado de tipo sets"""
     def __init__(self, id_partida, clase_padre):
@@ -302,6 +319,8 @@ class GestionarSets(Interfaz):
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
         self.glade.get_object('button8').connect('clicked', self.volver)
         self.glade.get_object('button9').connect('clicked', self.aceptar)
+        self.glade.get_object('checkbutton3').connect('toggled', self.dinamizar)
+        self.glade.get_object('checkbutton4').connect('toggled', self.dinamizar)
 
         datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
         self.glade.get_object('checkbutton4').set_label(datos_partida.nombre_local)
@@ -353,31 +372,32 @@ class GestionarSets(Interfaz):
     def aceptar(self, widget):
         mensajes_error = []
 
-        lista_dto_sets = []
-        ganadores = []
-        lista_sets = self.lista_widgets[:self.cantidad_de_sets]
-        for i, diccionario in enumerate(lista_sets):
-            if round(self.cantidad_de_sets/2.) in [ganadores.count(True), ganadores.count(False)]:
-                break # Si ya hay un ganador porque el otro no puede darlo vuelta
-            valor_local = diccionario['local'].get_text()
-            valor_visitante = diccionario['visitante'].get_text()
-            if '' in [valor_local, valor_visitante]:
-                if valor_local == '':
-                    mensajes_error.append('Debe ingresar un valor para {} en el set {}.'.format(self.nombre_local,i+1))
-                if valor_visitante == '':
-                    mensajes_error.append('Debe ingresar un valor para {} en el set {}.'.format(self.nombre_visitante,i+1))
-                continue # Si ocurre un error, salta al proximo elemento de la lista
-
-            puntos_local = int(valor_local)
-            puntos_visitante = int(valor_visitante)
-            if puntos_local == puntos_visitante:
-                mensajes_error.append('Debe haber un ganador en el set {}.'.format(i+1))
-                continue # Si ocurre un error, salta al proximo elemento de la lista
-            lista_dto_sets.append(DTOSet(None, puntos_local, puntos_visitante, i+1))
-            ganadores.append(puntos_local>puntos_visitante)
-
         local_presente = self.glade.get_object('checkbutton4').get_active()
         visitante_presente = self.glade.get_object('checkbutton3').get_active()
+
+        lista_dto_sets = []
+        if local_presente and visitante_presente:
+            ganadores = []
+            lista_sets = self.lista_widgets[:self.cantidad_de_sets]
+            for i, diccionario in enumerate(lista_sets):
+                if (int(self.cantidad_de_sets)/2+1) in [ganadores.count(True), ganadores.count(False)]:
+                    break # Si ya hay un ganador porque el otro no puede darlo vuelta
+                valor_local = diccionario['local'].get_text()
+                valor_visitante = diccionario['visitante'].get_text()
+                if '' in [valor_local, valor_visitante]:
+                    if valor_local == '':
+                        mensajes_error.append('Debe ingresar un valor para {} en el set {}.'.format(self.nombre_local,i+1))
+                    if valor_visitante == '':
+                        mensajes_error.append('Debe ingresar un valor para {} en el set {}.'.format(self.nombre_visitante,i+1))
+                    continue # Si ocurre un error, salta al proximo elemento de la lista
+
+                puntos_local = int(valor_local)
+                puntos_visitante = int(valor_visitante)
+                if puntos_local == puntos_visitante:
+                    mensajes_error.append('Debe haber un ganador en el set {}.'.format(i+1))
+                    continue # Si ocurre un error, salta al proximo elemento de la lista
+                lista_dto_sets.append(DTOSet(None, puntos_local, puntos_visitante, i+1))
+                ganadores.append(puntos_local>puntos_visitante)
 
         if not (local_presente or visitante_presente):
             mensajes_error.append('Debe haber al menos un participante presente.')
@@ -393,11 +413,19 @@ class GestionarSets(Interfaz):
             Exito(self)
 
     def dinamizar(self, widget):
-        texto = widget.get_text()
-        texto = filter(str.isdigit, texto)
-        if len(texto) > 2:
-            texto = texto[:2]
-        widget.set_text(texto)
+        nombre = gtk.Buildable.get_name(widget)
+        if 'entry' in nombre:
+            texto = widget.get_text()
+            texto = filter(str.isdigit, texto)
+            if len(texto) > 2:
+                texto = texto[:2]
+            widget.set_text(texto)
+        elif 'checkbutton' in nombre:
+            local_presente = self.glade.get_object('checkbutton4').get_active()
+            visitante_presente = self.glade.get_object('checkbutton3').get_active()
+            for grupo_widgets in self.lista_widgets[:self.cantidad_de_sets]:
+                for widgt in grupo_widgets.values():
+                    widgt.set_sensitive(local_presente and visitante_presente)
 
 class MostrarResultadoPuntos:
     """Interfaz para mostrar un resultado de tipo puntuacion"""
