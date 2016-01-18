@@ -64,9 +64,12 @@ class VerCompetencia(Interfaz):
         for partida in lista_de_partidas:
             if 'Dummy' in partida.nombre_visitante or 'Dummy' in partida.nombre_local:
                 lista_de_partidas.remove(partida)
-        for partida in lista_de_partidas[:5]:
+        nueva_lista = []
+        for partida in lista_de_partidas:
             if partida.estado != 'Finalizada':
-                self.glade.get_object("treeview2").get_model().append([partida.nombre_local, partida.nombre_visitante])
+                nueva_lista.append(partida)
+        for partidas in nueva_lista[:5]:
+            self.glade.get_object("treeview2").get_model().append([partidas.nombre_local, partidas.nombre_visitante])
 
         self.main_window = self.glade.get_object('ver_competencia')
         self.main_window.connect('destroy', self.destroy)
