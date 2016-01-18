@@ -6,10 +6,10 @@ Corregidos:
 * Ordenar Tabla.
 * No vuelven a cargarse los proximos encuentros después de que se jugaron los primeros cinco en Ver Competencia.
 * Filtro de mostrar fixture
+* Aplicar la misma validacion del nombre de competencia al de nombre participante
 
 
 Por corregir:
 
 * Si no se presenta no pedir resultado en Gestionar Resultados
 * Advertencia antes de generar fixture
-* Aplicar la misma validacion del nombre de competencia al de nombre participante

@@ -273,7 +273,8 @@ class NuevaCompetencia(Interfaz):
         if nombre == '':
             mensaje_errores.append('Debe ingresar un nombre para la competencia.')
         if not re.match(r"^[A-Z0-9]+( [A-Z0-9]+)*$", nombre):
-            mensaje_errores.append('Nombre invalido. Solo puede contener letras, numeros y espacios.')
+            mensaje_errores.append('Nombre invalido. Solo puede contener letras, numeros y espacios')
+            mensaje_errores.append('y no debe empezar ni terminar con un espacio.')
         if deporte_box.get_active() == -1:
             mensaje_errores.append('Debe ingresar un deporte para la competencia.')
 

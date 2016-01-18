@@ -119,6 +119,9 @@ class MostrarFixture(Interfaz):
     def ver_detalle(self, widget):
         model = self.treeview.get_model()
         cursor, _ = self.treeview.get_cursor()
+        if cursor is None:
+            self.mostrar_error('Debe seleccionar una partida primero.')
+            return
         resultado = model.get_value(model.get_iter(cursor), 3)
         if resultado == 'Sin jugar':
             self.mostrar_error('No hay resultado cargado para esta partida.')
@@ -138,6 +141,9 @@ class MostrarFixture(Interfaz):
         opc = {'porresultadofinal': GestionarFinal, 'porpuntuacion': GestionarPuntos, 'porsets': GestionarSets}
         model = self.treeview.get_model()
         cursor, _ = self.treeview.get_cursor()
+        if cursor is None:
+            self.mostrar_error('Debe seleccionar una partida primero.')
+            return
         id_partida = model.get_value(model.get_iter(cursor), 4)
         dto_partida_seleccionada = filter(lambda x: x.id == id_partida, self.lista_partidas)[0]
         if 'Libre' in [dto_partida_seleccionada.nombre_local, dto_partida_seleccionada.nombre_visitante]:

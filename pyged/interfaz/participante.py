@@ -73,9 +73,9 @@ class NuevoParticipante(Interfaz):
         self.clase_padre.main_window.show()
 
     def validar_nombre(self, nombre):
-        for letra in nombre:
-            if not (letra.isalnum() or letra.isspace()):
-                return ['Nombre incorrecto, solo puede contener letras, numeros y espacios.']
+        if not re.match(r"^[A-Z0-9]+( [A-Z0-9]+)*$", nombre, re.IGNORECASE):
+            return ['Nombre incorrecto, solo puede contener letras, numeros y espacios',
+                    'y no debe empezar ni terminar con un espacio.']
         else:
             return []
 

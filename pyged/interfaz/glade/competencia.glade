@@ -86,6 +86,7 @@
   </object>
   <object class="GtkWindow" id="listar_competencia">
     <property name="width_request">600</property>
+    <property name="height_request">450</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Mis Competencias</property>
     <property name="window_position">center</property>
@@ -655,8 +656,16 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="sets">
+    <property name="lower">1</property>
+    <property name="upper">9</property>
+    <property name="value">1</property>
+    <property name="step_increment">2</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="nueva_modificar_competencia">
     <property name="width_request">600</property>
+    <property name="height_request">450</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Crear una Competencia</property>
     <property name="window_position">center</property>
@@ -1638,17 +1647,10 @@
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="sets">
-    <property name="lower">1</property>
-    <property name="upper">9</property>
-    <property name="value">1</property>
-    <property name="step_increment">2</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkTextBuffer" id="textbuffer1"/>
   <object class="GtkWindow" id="ver_competencia">
     <property name="width_request">600</property>
-    <property name="height_request">265</property>
+    <property name="height_request">450</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Ver Competencia</property>
     <property name="window_position">center</property>
