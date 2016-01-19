@@ -165,38 +165,45 @@ class GestorCompetencia(Singleton):
                     continue
                 if partida.resultado.tipo == 'porpuntuacion':
                     tipo = 'porpuntuacion'
-                    if partida.participante_local == participante and partida.local_presente:
-                        puntos += presentarse
-                        if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
-                            puntos += ganar
-                            partidos_ganados += 1
-                            goles_a_favor += partida.resultado.puntos_de_local
-                            goles_en_contra += partida.resultado.puntos_de_visitante
-                        elif partida.resultado.puntos_de_local < partida.resultado.puntos_de_visitante:
-                            partidos_perdidos += 1
-                            goles_a_favor += partida.resultado.puntos_de_local
-                            goles_en_contra += partida.resultado.puntos_de_visitante
+                    if partida.participante_local == participante:
+                        if partida.local_presente:
+                            puntos += presentarse
+                            if partida.resultado.puntos_de_local > partida.resultado.puntos_de_visitante:
+                                puntos += ganar
+                                partidos_ganados += 1
+                                goles_a_favor += partida.resultado.puntos_de_local
+                                goles_en_contra += partida.resultado.puntos_de_visitante
+                            elif partida.resultado.puntos_de_local < partida.resultado.puntos_de_visitante:
+                                partidos_perdidos += 1
+                                goles_a_favor += partida.resultado.puntos_de_local
+                                goles_en_contra += partida.resultado.puntos_de_visitante
+                            else:
+                                puntos += empate
+                                partidos_empatados += 1
+                                goles_a_favor += partida.resultado.puntos_de_local
+                                goles_en_contra += partida.resultado.puntos_de_visitante
                         else:
-                            puntos += empate
-                            partidos_empatados += 1
-                            goles_a_favor += partida.resultado.puntos_de_local
                             goles_en_contra += partida.resultado.puntos_de_visitante
-                    if partida.participante_visitante == participante and partida.visitante_presente:
-                        puntos += presentarse
-                        if partida.resultado.puntos_de_visitante > partida.resultado.puntos_de_local:
-                            puntos += ganar
-                            partidos_ganados += 1
-                            goles_a_favor += partida.resultado.puntos_de_visitante
-                            goles_en_contra += partida.resultado.puntos_de_local
-                        elif partida.resultado.puntos_de_visitante < partida.resultado.puntos_de_local:
-                            partidos_perdidos += 1
-                            goles_a_favor += partida.resultado.puntos_de_visitante
-                            goles_en_contra += partida.resultado.puntos_de_local
+                    if partida.participante_visitante == participante:
+                        if partida.visitante_presente:
+                            puntos += presentarse
+                            if partida.resultado.puntos_de_visitante > partida.resultado.puntos_de_local:
+                                puntos += ganar
+                                partidos_ganados += 1
+                                goles_a_favor += partida.resultado.puntos_de_visitante
+                                goles_en_contra += partida.resultado.puntos_de_local
+                            elif partida.resultado.puntos_de_visitante < partida.resultado.puntos_de_local:
+                                partidos_perdidos += 1
+                                goles_a_favor += partida.resultado.puntos_de_visitante
+                                goles_en_contra += partida.resultado.puntos_de_local
+                            else:
+                                puntos += empate
+                                partidos_empatados += 1
+                                goles_a_favor += partida.resultado.puntos_de_visitante
+                                goles_en_contra += partida.resultado.puntos_de_local
                         else:
-                            puntos += empate
-                            partidos_empatados += 1
-                            goles_a_favor += partida.resultado.puntos_de_visitante
                             goles_en_contra += partida.resultado.puntos_de_local
+
                 if partida.resultado.tipo == 'porresultadofinal':
                     tipo = 'porresultadofinal'
                     if partida.participante_local == participante and partida.local_presente:
@@ -221,44 +228,53 @@ class GestorCompetencia(Singleton):
                             partidos_perdidos += 1
                 if partida.resultado.tipo == 'porsets':
                     tipo = 'porsets'
-                    if partida.participante_local == participante and partida.local_presente:
-                        puntos += presentarse
-                        lista_sets = partida.resultado.sets
-                        ganador_local = 0
-                        ganador_visitante = 0
-                        for sets in lista_sets:
-                            if sets.puntaje_de_local > sets.puntaje_de_visitante:
-                                ganador_local += 1
-                                goles_a_favor += sets.puntaje_de_local
-                                goles_en_contra += sets.puntaje_de_visitante
-                            if sets.puntaje_de_local < sets.puntaje_de_visitante:
-                                ganador_visitante += 1
-                                goles_a_favor += sets.puntaje_de_local
-                                goles_en_contra += sets.puntaje_de_visitante
-                        if ganador_local > ganador_visitante:
-                            puntos += ganar
-                            partidos_ganados += 1
+                    if partida.participante_local == participante:
+                        if partida.local_presente:
+                            puntos += presentarse
+                            lista_sets = partida.resultado.sets
+                            ganador_local = 0
+                            ganador_visitante = 0
+                            for sets in lista_sets:
+                                if sets.puntaje_de_local > sets.puntaje_de_visitante:
+                                    ganador_local += 1
+                                    goles_a_favor += sets.puntaje_de_local
+                                    goles_en_contra += sets.puntaje_de_visitante
+                                if sets.puntaje_de_local < sets.puntaje_de_visitante:
+                                    ganador_visitante += 1
+                                    goles_a_favor += sets.puntaje_de_local
+                                    goles_en_contra += sets.puntaje_de_visitante
+                            if ganador_local > ganador_visitante:
+                                puntos += ganar
+                                partidos_ganados += 1
+                            else:
+                                partidos_perdidos += + 1
                         else:
-                            partidos_perdidos += + 1
-                    if partida.participante_visitante == participante and partida.visitante_presente:
-                        puntos += presentarse
-                        lista_sets = partida.resultado.sets
-                        ganador_local = 0
-                        ganador_visitante = 0
-                        for sets in lista_sets:
-                            if sets.puntaje_de_local > sets.puntaje_de_visitante:
-                                ganador_local += 1
-                                goles_a_favor += sets.puntaje_de_visitante
-                                goles_en_contra += sets.puntaje_de_local
-                            if sets.puntaje_de_local < sets.puntaje_de_visitante:
-                                ganador_visitante += 1
-                                goles_a_favor += sets.puntaje_de_visitante
-                                goles_en_contra += sets.puntaje_de_local
-                        if ganador_local < ganador_visitante:
-                            puntos += ganar
-                            partidos_ganados += 1
+                            lista_sets = partida.resultado.sets
+                            for sets in lista_sets:
+                                goles_en_contra += sets.puntaje_de_visitante
+                    if partida.participante_visitante == participante:
+                        if partida.visitante_presente:
+                            puntos += presentarse
+                            lista_sets = partida.resultado.sets
+                            ganador_local = 0
+                            ganador_visitante = 0
+                            for sets in lista_sets:
+                                if sets.puntaje_de_local > sets.puntaje_de_visitante:
+                                    ganador_local += 1
+                                    goles_a_favor += sets.puntaje_de_visitante
+                                    goles_en_contra += sets.puntaje_de_local
+                                if sets.puntaje_de_local < sets.puntaje_de_visitante:
+                                    ganador_visitante += 1
+                                    goles_a_favor += sets.puntaje_de_visitante
+                                    goles_en_contra += sets.puntaje_de_local
+                            if ganador_local < ganador_visitante:
+                                puntos += ganar
+                                partidos_ganados += 1
+                            else:
+                                partidos_perdidos += 1
                         else:
-                            partidos_perdidos += 1
+                            for sets in lista_sets:
+                                goles_en_contra += sets.puntaje_de_local
             if tipo == 'porpuntuacion':
                 dto = DTOTabla(participante.id, participante.nombre, puntos, partidos_ganados, partidos_empatados,
                                partidos_perdidos, goles_a_favor, goles_en_contra)
