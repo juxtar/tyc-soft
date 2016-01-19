@@ -23,6 +23,9 @@ def agregar_cuadro_error(main_window):
         vbox.pack_start(hijo, True, True, 0)
     main_window.add(vbox)
 
+    color = gtk.gdk.Color('#8BB1C5')
+    main_window.modify_bg(gtk.STATE_NORMAL, color)
+
     boton_cerrar = glade.get_object('button1')
 
     return infobar, boton_cerrar
