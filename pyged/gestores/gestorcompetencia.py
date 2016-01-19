@@ -273,6 +273,7 @@ class GestorCompetencia(Singleton):
                             else:
                                 partidos_perdidos += 1
                         else:
+                            lista_sets = partida.resultado.sets
                             for sets in lista_sets:
                                 goles_en_contra += sets.puntaje_de_local
             if tipo == 'porpuntuacion':
@@ -344,7 +345,7 @@ class GestorCompetencia(Singleton):
                 raise NombreExistente('Este participante ya existe en esta competencia.')
             if parts.correo_electronico == participante.correo_electronico:
                 raise NombreExistente('Este correo electronico ya existe en esta competencia.')
-        if competencia.partidas is not None:
+        if competencia.partidas:
             GestorCompetencia.get_instance().eliminar_fixture(id_competencia = competencia.id)
             retorno = 2
         competencia.participantes.append(participante)

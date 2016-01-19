@@ -57,6 +57,8 @@ class NuevoParticipante(Interfaz):
                 exito = GestorParticipante.get_instance().nuevo_participante(dto)
                 if exito is 1:
                     Exito(self)
+                elif exito is 2:
+                    Exito(self, True, 'Se ha eliminado tambien el fixture.')
             except NombreExistente as e:
                 self.mostrar_error(e.mensaje)
             except FaltaDeDatos as f:
