@@ -21,8 +21,7 @@ class GestorParticipante(Singleton):
         part = Participante(nombre=dto.nombre, correo_electronico = dto.correo_electronico)
         historial = HistorialNombres(nombre = part.nombre, fecha = datetime.now().date(), id_participante = part.id)
         part.historial_nombres = [historial]
-        GestorCompetencia.get_instance().agregar_participante(participante = part,id_competencia = dto.id_competencia)
-        return 1
+        return GestorCompetencia.get_instance().agregar_participante(participante = part,id_competencia = dto.id_competencia)
 
     def modificar_participante(self):
         pass
