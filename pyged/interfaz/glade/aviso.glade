@@ -6,6 +6,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">¡Advertencia!</property>
+    <property name="icon">icono2.png</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox3">
@@ -90,6 +91,7 @@
     <property name="title" translatable="yes">¡Éxito!</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
+    <property name="icon">icono2.png</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
