@@ -37,7 +37,7 @@ class GestorParticipante(Singleton):
         else:
             lista_participantes += GestorBaseDeDatos.get_instance().listar_participantes(id_competencia=id_competencia)
         lista = []
-        competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
+        competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)[0]
         for participante in lista_participantes:
             nombres_en_historial = []
             for nombre in participante.historial_nombres:

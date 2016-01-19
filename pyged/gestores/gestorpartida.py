@@ -4,7 +4,6 @@ from dtos import *
 from pyged.almacenamiento import *
 from datetime import datetime
 from excepciones import *
-from gestorcompetencia import GestorCompetencia
 
 class GestorPartida(Singleton):
     """Realiza tareas correspondientes al manejo de clases Lugar"""
@@ -47,6 +46,7 @@ class GestorPartida(Singleton):
             return DTOResultado(partida.resultado.id, partida.id, partida.resultado.tipo,partida.local_presente,partida.visitante_presente,
                                partida.resultado.puntos_de_local, partida.resultado.puntos_de_visitante, None)
     def agregar_resultado(self, dto):
+        from gestorcompetencia import GestorCompetencia
         partida = GestorBaseDeDatos.get_instance().listar_partidas(id_partida = dto.id_partida)
         competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia = partida.id_competencia)
         cantidad_de_sets = competencia[0].cantidad_de_sets
@@ -109,3 +109,6 @@ class GestorPartida(Singleton):
                              None, None, None, None, None)
             GestorCompetencia.get_instance().modificar_competencia(dtocompetencia)
         return 1
+
+    def eliminar_partida(self, partida):
+        GestorBaseDeDatos.get_instance().eliminar_partida(partida)

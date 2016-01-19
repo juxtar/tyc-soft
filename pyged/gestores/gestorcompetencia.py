@@ -299,6 +299,7 @@ class GestorCompetencia(Singleton):
 
     def eliminar_fixture(self, id_competencia):
         from gestorparticipante import GestorParticipante
+        from gestorpartida import GestorPartida
 
         competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia = id_competencia)
         for participante in competencia.participantes:
@@ -308,7 +309,7 @@ class GestorCompetencia(Singleton):
                 GestorParticipante.get_instance().eliminar_participante(participante)
                 break
         for partida in competencia.partidas:
-            GestorBaseDeDatos.get_instance().eliminar_partida(partida)
+            GestorPartida.get_instance().eliminar_partida(partida)
 
     def listar_deportes(self):
         deportes = GestorBaseDeDatos.get_instance().listar_deportes()
