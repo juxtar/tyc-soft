@@ -9,7 +9,7 @@ from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.gestorlugar import GestorLugar
 from pyged.gestores.gestorpartida import GestorPartida
 from main import agregar_cuadro_error, Interfaz
-from aviso import Exito
+from aviso import Exito, Advertencia
 from resultado import MostrarTablaPosiciones, MostrarFixture
 from participante import VerParticipantes
 import re
@@ -42,7 +42,7 @@ class VerCompetencia(Interfaz):
         self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
         self.glade.get_object('button10').connect('clicked', self.ver_participantes)
         self.glade.get_object('button9').connect('clicked', self.volver)
-        self.glade.get_object('button8').connect('clicked', self.generar_fixture)
+        self.glade.get_object('button8').connect('clicked', self.verificar_fixture)
         self.glade.get_object('button7').connect('clicked', self.mostrar_tabla)
         self.glade.get_object('button6').connect('clicked', self.mostrar_fixture)
 
@@ -94,10 +94,17 @@ class VerCompetencia(Interfaz):
             return
         n = MostrarTablaPosiciones(self.id_competencia)
 
-    def generar_fixture(self, widget):
+    def verificar_fixture(self, widget):
         if self.tipo_competencia != 'liga':
             self.mostrar_error('No esta implementado generar fixture para eliminatorias.')
             return
+        if self.estado_competencia != 'Creada':
+            Advertencia('Si genera un nuevo fixture se eliminara el anterior junto con los datos de las partidas.',
+                        self, True, False)
+        else:
+            self.generar_fixture()
+
+    def generar_fixture(self):
         try:
             exito = GestorCompetencia.get_instance().generar_fixture(self.id_competencia)
             if exito is 1:
@@ -369,7 +376,3 @@ class CuadroLugar(gtk.HBox):
 
     def set_label(self, text):
         self.check.set_label(text)
-
-if __name__ == '__main__':
-    a = NuevaCompetencia(0)
-    gtk.main()
