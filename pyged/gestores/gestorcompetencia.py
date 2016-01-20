@@ -95,7 +95,6 @@ class GestorCompetencia(Singleton):
         if len(competencia.partidas) > 0:
             GestorCompetencia.get_instance().eliminar_fixture(id_competencia=id_competencia)
             competencia = GestorBaseDeDatos.get_instance().listar_competencias(id_competencia=id_competencia)
-        competencia.estado = 'Planificada'
         lista_participantes = competencia.participantes[:]
         if len(lista_participantes) < 2:
             raise FaltaDeDatos('No hay suficientes participantes en la competencia.')
@@ -105,8 +104,6 @@ class GestorCompetencia(Singleton):
         for lugar in sedes:
             disponibilidad += lugar.disponibilidad
         if (cantidad_de_participantes/2) > disponibilidad:
-            print cantidad_de_participantes
-            print disponibilidad
             raise FaltaDeDatos('No hay suficiente disponibilidad para generar el fixture')
         nombre_dummy = "Dummy" + competencia.nombre
         if (cantidad_de_participantes % 2) == 1:
@@ -114,8 +111,6 @@ class GestorCompetencia(Singleton):
                                   id_competencia = competencia.id)
             lista_participantes.append(dummy)
             cantidad_de_participantes = len(lista_participantes)
-        for lugar in sedes:
-            disponibilidad += lugar.disponibilidad
         for fecha in range(cantidad_de_participantes - 1):
             for partida in range(cantidad_de_participantes/2):
                 if lista_participantes[partida].nombre == nombre_dummy:
@@ -133,6 +128,7 @@ class GestorCompetencia(Singleton):
 
                 competencia.partidas.append(nueva_partida)
             lista_participantes.append(lista_participantes.pop(1))
+        competencia.estado = 'Planificada'
         GestorBaseDeDatos.get_instance().modificar_competencia()
         return 1
 
