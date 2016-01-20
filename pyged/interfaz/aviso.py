@@ -11,7 +11,7 @@ class Exito:
         self.clase_ventana_padre = clase_ventana_padre
         self.volver = volver
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\aviso.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/aviso.glade')
         self.main_window = self.glade.get_object('exito')
         self.main_window.set_transient_for(clase_ventana_padre.main_window)
 
@@ -35,7 +35,7 @@ class Advertencia:
         self.generar_fixture = generar_fixture
         self.volver = volver
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\aviso.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/aviso.glade')
         self.main_window = self.glade.get_object('advertencia')
         self.main_window.set_transient_for(clase_ventana_padre.main_window)
 

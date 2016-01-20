@@ -39,7 +39,7 @@ class VerCompetencia(Interfaz):
         self.id_competencia = id_competencia
         self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/competencia.glade')
         self.glade.get_object('button10').connect('clicked', self.ver_participantes)
         self.glade.get_object('button9').connect('clicked', self.volver)
         self.glade.get_object('button8').connect('clicked', self.verificar_fixture)
@@ -75,6 +75,7 @@ class VerCompetencia(Interfaz):
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
+        self.cerrar_error(None)
         self.main_window.show_all()
 
     def destroy(self, widget):
@@ -127,7 +128,7 @@ class ListarMisCompetencias(Interfaz):
     def __init__(self, id_usuario):
         self.id_usuario = id_usuario
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/competencia.glade')
         self.glade.get_object('botonBuscar').connect('clicked', self.buscar)
         self.glade.get_object('button1').connect('clicked', self.volver)
         self.glade.get_object('button2').connect('clicked', self.ver_competencia)
@@ -200,7 +201,7 @@ class NuevaCompetencia(Interfaz):
         self.id_usuario = id_usuario
         self.ventana_padre = ventana_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\competencia.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/competencia.glade')
         self.glade.get_object('button4').connect('clicked', self.volver)
         self.glade.get_object('button5').connect('clicked', self.aceptar)
 

@@ -17,7 +17,7 @@ class MostrarFixture(Interfaz):
         self.id_competencia = id_competencia
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button1').connect('clicked', self.volver)
         self.glade.get_object('button2').connect('clicked', self.ver_detalle)
         self.glade.get_object('button3').connect('clicked', self.gestionar_resultado)
@@ -170,7 +170,7 @@ class GestionarFinal(Interfaz):
         self.id_partida = id_partida
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button6').connect('clicked', self.volver)
         self.glade.get_object('button7').connect('clicked', self.aceptar)
         self.glade.get_object('checkbutton1').connect('toggled', self.dinamizar)
@@ -247,7 +247,7 @@ class GestionarPuntos(Interfaz):
         self.id_partida = id_partida
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button10').connect('clicked', self.volver)
         self.glade.get_object('button11').connect('clicked', self.aceptar)
 
@@ -316,7 +316,7 @@ class GestionarSets(Interfaz):
         self.id_partida = id_partida
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button8').connect('clicked', self.volver)
         self.glade.get_object('button9').connect('clicked', self.aceptar)
         self.glade.get_object('checkbutton3').connect('toggled', self.dinamizar)
@@ -432,7 +432,7 @@ class MostrarResultadoPuntos:
     def __init__(self, id_partida):
         self.id_partida = id_partida
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button5').connect('clicked', self.volver)
 
         datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
@@ -457,7 +457,7 @@ class MostrarResultadoSets:
     def __init__(self, id_partida):
         self.id_partida = id_partida
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button4').connect('clicked', self.volver)
 
         datos_partida = GestorPartida.get_instance().listar_partidas(id_partida=id_partida)[0]
@@ -490,7 +490,7 @@ class MostrarTablaPosiciones:
     def __init__(self, id_competencia):
         self.id_competencia = id_competencia
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\\resultado.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/resultado.glade')
         self.glade.get_object('button12').connect('clicked', self.volver)
         datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=id_competencia)
         self.glade.get_object('label53').set_text(datos_competencia[0].nombre)

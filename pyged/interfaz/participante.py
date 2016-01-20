@@ -17,7 +17,7 @@ class NuevoParticipante(Interfaz):
         self.id_competencia = id_competencia
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\participante.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/participante.glade')
         self.main_window = self.glade.get_object('nuevo_participante')
         self.glade.get_object('button5').connect('clicked', self.aceptar)
         self.glade.get_object('button6').connect('clicked', self.volver)
@@ -101,7 +101,7 @@ class VerParticipantes(Interfaz):
         self.id_competencia = id_competencia
         self.clase_padre = clase_padre
         self.glade = gtk.Builder()
-        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'\glade\participante.glade')
+        self.glade.add_from_file(path.dirname( path.abspath(__file__) )+'/glade/participante.glade')
         self.main_window = self.glade.get_object('ver_participantes')
         self.glade.get_object('button4').connect('clicked', self.volver)
         self.glade.get_object('button1').connect('clicked', self.nuevo_participante)
