@@ -45,6 +45,11 @@ class VerCompetencia(Interfaz):
         self.glade.get_object('button8').connect('clicked', self.verificar_fixture)
         self.glade.get_object('button7').connect('clicked', self.mostrar_tabla)
         self.glade.get_object('button6').connect('clicked', self.mostrar_fixture)
+        self.main_window = self.glade.get_object('ver_competencia')
+        self.main_window.connect('destroy', self.destroy)
+        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        boton_cerrar.connect('clicked', self.cerrar_error)
+        self.cerrar_error(None)
 
         self.actualizar()
 
@@ -71,11 +76,6 @@ class VerCompetencia(Interfaz):
         for partidas in nueva_lista[:5]:
             self.glade.get_object("treeview2").get_model().append([partidas.nombre_local, partidas.nombre_visitante])
 
-        self.main_window = self.glade.get_object('ver_competencia')
-        self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
-        boton_cerrar.connect('clicked', self.cerrar_error)
-        self.cerrar_error(None)
         self.main_window.show_all()
 
     def destroy(self, widget):

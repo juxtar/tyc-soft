@@ -31,6 +31,7 @@ class MostrarFixture(Interfaz):
         self.actualizar()
 
     def actualizar(self):
+        self.cerrar_error(None)
         combo_instancia = self.glade.get_object('combobox1')
         combo_equipo =  self.glade.get_object('combobox2')
 
