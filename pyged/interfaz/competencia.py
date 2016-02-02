@@ -49,11 +49,11 @@ class VerCompetencia(Interfaz):
         self.main_window.connect('destroy', self.destroy)
         self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
         boton_cerrar.connect('clicked', self.cerrar_error)
-        self.cerrar_error(None)
 
         self.actualizar()
 
     def actualizar(self):
+        self.cerrar_error(None)
         datos_competencia = GestorCompetencia.get_instance().listar_competencias(id_competencia=self.id_competencia)[0]
         self.glade.get_object('NombreCompetencia').set_text(datos_competencia.nombre)
         self.glade.get_object('modalidad').set_text(datos_competencia.tipo)
