@@ -99,7 +99,9 @@ class VerCompetencia(Interfaz):
         if self.tipo_competencia != 'liga':
             self.mostrar_error('No esta implementado generar fixture para eliminatorias.')
             return
-        if self.estado_competencia != 'Creada':
+        if self.estado_competencia in ['Finalizada', 'En Disputa']:
+            self.mostrar_error('No se puede volver a generar el fixture.')
+        if self.estado_competencia == 'Planificada':
             Advertencia('Si genera un nuevo fixture se eliminara el anterior junto con los datos de las partidas.',
                         self, True, False)
         else:
