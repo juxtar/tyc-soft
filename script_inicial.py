@@ -28,6 +28,6 @@ lucho.competencias = [
 session.add(lucho)
 session.commit()
 
-deportes = [Deporte(nombre='Basketball'), Deporte(nombre='Ajedrez'), Deporte(nombre='Voleyball')]
+deportes = [Deporte(nombre='Basketball'), Deporte(nombre='Ajedrez'), Deporte(nombre='Voleyball'), Deporte(nombre='Tenis')]
 session.add_all(deportes)
 session.commit()
