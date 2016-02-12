@@ -3,7 +3,7 @@ pygtk.require("2.0")
 import gtk
 import gtk.glade
 from os import path
-from main import agregar_cuadro_error,Interfaz
+from main import Interfaz
 from pyged.gestores.gestorparticipante import GestorParticipante
 from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.dtos import DTOParticipante
@@ -37,7 +37,7 @@ class NuevoParticipante(Interfaz):
         self.glade.get_object('filechooserbutton1').add_filter(filtro_imagen)
 
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
@@ -109,7 +109,7 @@ class VerParticipantes(Interfaz):
         self.glade.get_object('label1').set_text(datos_competencia.nombre)
 
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 

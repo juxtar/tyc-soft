@@ -7,7 +7,7 @@ from pyged.gestores.gestorpartida import GestorPartida
 from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.dtos import DTOResultado, DTOSet
 from pyged.gestores.excepciones import FaltaDeDatos
-from main import agregar_cuadro_error, Interfaz
+from main import Interfaz
 from aviso import Exito
 
 
@@ -24,7 +24,7 @@ class MostrarFixture(Interfaz):
 
         self.main_window = self.glade.get_object('fixture')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
@@ -195,7 +195,7 @@ class GestionarFinal(Interfaz):
 
         self.main_window = self.glade.get_object('gestionar_final')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
@@ -268,7 +268,7 @@ class GestionarPuntos(Interfaz):
 
         self.main_window = self.glade.get_object('gestionar_puntos')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
@@ -358,7 +358,7 @@ class GestionarSets(Interfaz):
 
         self.main_window = self.glade.get_object('gestionar_sets')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 

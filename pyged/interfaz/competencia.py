@@ -8,29 +8,12 @@ from pyged.gestores.excepciones import NombreExistente, FaltaDeDatos
 from pyged.gestores.gestorcompetencia import GestorCompetencia
 from pyged.gestores.gestorlugar import GestorLugar
 from pyged.gestores.gestorpartida import GestorPartida
-from main import agregar_cuadro_error, Interfaz
+from main import Interfaz
 from aviso import Exito, Advertencia
 from resultado import MostrarTablaPosiciones, MostrarFixture
 from participante import VerParticipantes
 import re
 
-def obtener_descendientes(widget, tipo):
-    """Busca descendientes del widget del tipo especificado"""
-    descendientes = []
-    try:
-        for hijo in widget.get_children():
-            if type(hijo).__name__ == tipo:
-                descendientes.append(hijo)
-            else:
-                descendientes += obtener_descendientes(hijo, tipo)
-    except AttributeError:
-        return []
-    except TypeError:
-        hijo = widget.get_children()
-        if type(hijo).__name__ == tipo:
-            descendientes.append(hijo)
-    finally:
-        return descendientes
 
 class VerCompetencia(Interfaz):
     """ Muestra informacion de la competencia y acceso a otras interfaces para el manejo de la misma
@@ -47,7 +30,7 @@ class VerCompetencia(Interfaz):
         self.glade.get_object('button6').connect('clicked', self.mostrar_fixture)
         self.main_window = self.glade.get_object('ver_competencia')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
 
         self.actualizar()
@@ -138,7 +121,7 @@ class ListarMisCompetencias(Interfaz):
 
         self.main_window = self.glade.get_object('listar_competencia')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
@@ -212,7 +195,7 @@ class NuevaCompetencia(Interfaz):
         for deporte in deportes_cargados:
             self.glade.get_object('comboDeporte1').append_text(deporte)
 
-        botones = obtener_descendientes(self.glade.get_object('vbox1'), 'RadioButton')
+        botones = self.obtener_descendientes(self.glade.get_object('vbox1'), 'RadioButton')
         botones.append(self.glade.get_object('empate'))
         for b in botones:
             b.connect('toggled', self.dinamizar)
@@ -227,7 +210,7 @@ class NuevaCompetencia(Interfaz):
 
         self.main_window = self.glade.get_object('nueva_modificar_competencia')
         self.main_window.connect('destroy', self.destroy)
-        self.infobar, boton_cerrar = agregar_cuadro_error(self.main_window)
+        self.infobar, boton_cerrar = self.agregar_cuadro_error()
         boton_cerrar.connect('clicked', self.cerrar_error)
         self.main_window.show_all()
 
