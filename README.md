@@ -1,4 +1,16 @@
-#Planificador y Gestor de Encuentros Deportivos
+# Planificador y Gestor de Encuentros Deportivos
 
-##Contribuidores 
-Luciano, Juli·n, Germ·n, MatÌas
+Proyecto realizado dentro del marco de la asignatura Dise√±o de Sistemas.
+
+## Dependencias
+
+- PyGTK
+- SQLAlchemy
+
+## Herramientas utilizadas
+
+- Glade Interface Designer
+- Sqlite
+
+## Contribuidores 
+Luciano, Juli√°n, Germ√°n, Mat√≠as
